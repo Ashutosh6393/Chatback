@@ -27,7 +27,7 @@
     "rules": {
       "recommended": true,
       "nursery": {
-        "useSortedClasses": "warn",
+        "useSortedClasses": "info",
         "noCommonJs": "error"
       },
       "suspicious": {
