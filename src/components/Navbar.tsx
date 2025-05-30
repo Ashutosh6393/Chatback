@@ -4,9 +4,9 @@ import Link from 'next/link.js'
 
 const Navbar = () => {
   return (
-    <header className="fixed top-0 w-full backdrop-blur-md">
-      <div className="container flex items-center justify-between py-4 ">
-        <div className="flex items-center justify-between">
+    <header className="fixed top-0 z-50 w-full border-zinc-400/10 border-b-[1px] backdrop-blur-lg">
+      <div className="container relative flex-center py-4 ">
+        <div className="flex flex-1 items-center justify-start">
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.png"
@@ -19,12 +19,13 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <nav className="flex items-center justify-between gap-14 font-semibold text-md tracking-wide">
+        <nav className="flex-1 flex-center gap-14 font-semibold text-md tracking-wide">
           <Link href="/">Features </Link>
           <Link href="/">Pricing</Link>
           <Link href="/">Contact</Link>
         </nav>
-        <div className="flex items-center gap-2">
+
+        <div className="flex flex-1 items-center justify-end gap-2">
           <Button variant="ghost" className="cursor-pointer font-bold text-md">
             Sign in
           </Button>
