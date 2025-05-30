@@ -67,6 +67,14 @@
   .flex-center {
     @apply flex items-center justify-center;
   }
+
+  .main-h2 {
+    @apply bg-gradient-to-br from-zinc-800 to-zinc-800 bg-clip-text font-semibold text-5xl text-transparent;
+  }
+
+  .main-p {
+    @apply mt-5 text-center text-foreground/70 text-lg;
+  }
 }
 
 @utility bg-light-gray {

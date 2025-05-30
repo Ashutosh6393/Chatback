@@ -1,6 +1,12 @@
-import PageTile from '@/components/common/PageTile'
-import { Button } from '@/components/ui/button'
 import HighlightCard from '@/components/common/HighlightCard'
+import PageTile from '@/components/common/PageTile'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { BookOpen, Share2, Shield } from 'lucide-react'
 
@@ -10,19 +16,42 @@ export default function Home() {
       title: 'Custom Training',
       description:
         'Train your chatbot using internal documents, wikis, product manuals, links, and FAQs—no coding required.',
-      icon: <BookOpen className="w-10 h-10 text-pink-600" />,
+      icon: <BookOpen className="h-10 w-10 text-pink-600" />,
     },
     {
       title: 'Multi-Platform Integration',
       description:
         'Deploy your chatbot effortlessly on your website, Slack, WhatsApp, Telegram, and more using our versatile APIs and widgets.',
-      icon: <Share2 className="w-10 h-10 text-green-600" />,
+      icon: <Share2 className="h-10 w-10 text-green-600" />,
     },
     {
       title: 'Scalable & Secure',
       description:
         'Our platform ensures your chatbot is always up-to-date and secure, ready to handle any customer query.',
-      icon: <Shield className="w-10 h-10 text-blue-600" />,
+      icon: <Shield className="h-10 w-10 text-blue-600" />,
+    },
+  ]
+
+  const accordionData = [
+    {
+      title: 'Empower Your Chatbot with Your Knowledge Base',
+      description:
+        'Upload your PDFs, internal docs, product manuals, and URLs. Our AI instantly learns from your data to power accurate, context-aware responses.',
+    },
+    {
+      title: 'Customize & Preview',
+      description:
+        'Personalize the chatbot’s look and feel—logo, color, avatar, and tone. See live previews to match your brand perfectly',
+    },
+    {
+      title: 'Integrate Anywhere',
+      description:
+        'Add it to your website with a chat popover, or use our API. Connect effortlessly to platforms like Slack, WhatsApp, and Telegram.',
+    },
+    {
+      title: 'Monitor & Improve',
+      description:
+        'Track messages, engagement, and user behavior in real-time. Refine responses with insights and boost performance continuously.',
     },
   ]
   return (
@@ -62,35 +91,78 @@ export default function Home() {
           </div>
         </div>
       </main>
-      <section className="bg-light-gray py-20">
-        <div className="container">
-          <div id="highlights" className="flex flex-col items-center w-full">
-            <div className="flex-center flex-col ">
-              <PageTile title="Highlights" dotBgColor="bg-blue-400" />
-              <div className="mt-10 flex w-full flex-col items-center justify-between">
-                <h2 className=" font-semibold text-5xl bg-gradient-to-br from-zinc-800 to-zinc-800 bg-clip-text text-transparent">
-                  Why Choose Chatback?
-                </h2>
-                <p className="mt-5 text-center text-foreground/70 text-lg">
-                  Experience a seamless blend of customization, integration, and{' '}
-                  <br />
-                  scalability designed to elevate your customer support.
-                </p>
-              </div>
-            </div>
-            <div className="flex justify-between items-stretch mt-15 gap-5 ">
-              {highligtsCardData.map(({ title, description, icon }) => (
-                <HighlightCard
-                  key={title}
-                  title={title}
-                  description={description}
-                  icon={icon}
-                />
-              ))}
+      <section id="highlights" className="bg-light-gray py-20">
+        <div id="highlights" className="container flex flex-col items-center">
+          <div className="flex-center flex-col ">
+            <PageTile title="Highlights" dotBgColor="bg-blue-400" />
+            <div className="mt-10 w-full flex-center flex-col">
+              <h2 className="main-h2">Why Choose Chatback?</h2>
+              <p className="main-p">
+                Experience a seamless blend of customization, integration, and{' '}
+                <br />
+                scalability designed to elevate your customer support.
+              </p>
             </div>
           </div>
+          <div className="mt-15 flex items-stretch justify-between gap-5 ">
+            {highligtsCardData.map(({ title, description, icon }) => (
+              <HighlightCard
+                key={title}
+                title={title}
+                description={description}
+                icon={icon}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+      <section id="working" className="bg-light-gray py-20">
+        <div className="container flex flex-col">
+          <div className="flex-center">
+            <PageTile title="How it works" dotBgColor="bg-pink-400" />
+          </div>
+          <div className="mt-10 flex-center flex-col">
+            <h2 className="main-h2">Build and Deploy in 4 Simple Steps</h2>
+            <p className="main-p">
+              From data upload to multi-platform deployment, creating your AI{' '}
+              <br />
+              support agent is straightforward.
+            </p>
+          </div>
+          <div className="mt-15 flex-center flex-col">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full md:w-[80%] lg:w-[60%]"
+              defaultValue="item-1"
+            >
+              {accordionData.map(({ title, description }, index) => (
+                <AccordionItem
+                  key={title}
+                  value={`item-${index + 1}`}
+                  className="my-2 rounded-2xl px-5 data-[state=open]:border-[1px] data-[state=open]:border-zinc-400/30 data-[state=closed]:border-none data-[state=open]:bg-white data-[state=open]:py-6"
+                >
+                  <AccordionTrigger className="font-semibold text-lg hover:no-underline data-[state=closed]:text-zinc-600/40 ">
+                    {title}
+                  </AccordionTrigger>
+                  <AccordionContent className="flex flex-col gap-4 text-pretty text-md">
+                    {description}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </section>
+      <section id="usecases" className="bg-light-gray py-20">
+        <div className="container flex flex-col">
+          <div className="flex-center">
+            <PageTile title="Use Cases" dotBgColor="bg-pink-400" />
+          </div>
+        </div>
+      </section>
 
-          {/* <div id="working" className="flex-center flex-col">
+      {/* <div id="working" className="flex-center flex-col">
             <h2>how it works</h2>
           </div>
           <div id="usecases" className="flex-center flex-col">
@@ -102,8 +174,6 @@ export default function Home() {
           <div id="contact" className="flex-center flex-col">
             <h2>contactus</h2>
           </div> */}
-        </div>
-      </section>
     </>
   )
 }
