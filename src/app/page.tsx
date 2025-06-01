@@ -1,3 +1,4 @@
+import Usecases from '@/components/Usecases'
 import HighlightCard from '@/components/common/HighlightCard'
 import PageTile from '@/components/common/PageTile'
 import {
@@ -9,7 +10,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { BookOpen, Share2, Shield } from 'lucide-react'
-import Usecases from '@/components/Usecases'
 
 export default function Home() {
   const highligtsCardData = [
