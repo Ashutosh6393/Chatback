@@ -31,11 +31,12 @@
         "noCommonJs": "error"
       },
       "suspicious": {
-        "useErrorMessage": "error"
+        "useErrorMessage": "error",
+        "noAssignInExpressions": "warn"
       },
       "correctness": {
-        "noUnusedImports": "error",
-        "noUnusedVariables": "error"
+        "noUnusedImports": "warn",
+        "noUnusedVariables": "warn"
       },
       "style": {
         "useNamingConvention": "error"

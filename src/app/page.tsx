@@ -1,3 +1,4 @@
+import PricingTableShort from '@/components/PricingTableShort'
 import Usecases from '@/components/Usecases'
 import HighlightCard from '@/components/common/HighlightCard'
 import PageTile from '@/components/common/PageTile'
@@ -8,53 +9,9 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
+import { highligtsCardData, useCaseData } from '@/constants'
 import { cn } from '@/lib/utils'
-import { BookOpen, Share2, Shield } from 'lucide-react'
-
 export default function Home() {
-  const highligtsCardData = [
-    {
-      title: 'Custom Training',
-      description:
-        'Train your chatbot using internal documents, wikis, product manuals, links, and FAQs—no coding required.',
-      icon: <BookOpen className="h-10 w-10 text-pink-600" />,
-    },
-    {
-      title: 'Multi-Platform Integration',
-      description:
-        'Deploy your chatbot effortlessly on your website, Slack, WhatsApp, Telegram, and more using our versatile APIs and widgets.',
-      icon: <Share2 className="h-10 w-10 text-green-600" />,
-    },
-    {
-      title: 'Scalable & Secure',
-      description:
-        'Our platform ensures your chatbot is always up-to-date and secure, ready to handle any customer query.',
-      icon: <Shield className="h-10 w-10 text-blue-600" />,
-    },
-  ]
-
-  const accordionData = [
-    {
-      title: 'Empower Your Chatbot with Your Knowledge Base',
-      description:
-        'Upload your PDFs, internal docs, product manuals, and URLs. Our AI instantly learns from your data to power accurate, context-aware responses.',
-    },
-    {
-      title: 'Customize & Preview',
-      description:
-        'Personalize the chatbot’s look and feel—logo, color, avatar, and tone. See live previews to match your brand perfectly',
-    },
-    {
-      title: 'Integrate Anywhere',
-      description:
-        'Add it to your website with a chat popover, or use our API. Connect effortlessly to platforms like Slack, WhatsApp, and Telegram.',
-    },
-    {
-      title: 'Monitor & Improve',
-      description:
-        'Track messages, engagement, and user behavior in real-time. Refine responses with insights and boost performance continuously.',
-    },
-  ]
   return (
     <>
       <main className="relative flex h-[50rem] w-full items-center justify-center bg-white dark:bg-black">
@@ -86,7 +43,7 @@ export default function Home() {
               <br />
               internal wikis, and more — in minutes.
             </p>
-            <Button className="mt-10 cursor-pointer rounded-lg bg-zinc-900 p-5 font-md text-lg text-white shadow-grad">
+            <Button className="mt-10 cursor-pointer rounded-lg bg-zinc-900 p-5 text-lg text-white shadow-grad">
               Buid your agent
             </Button>
           </div>
@@ -134,10 +91,10 @@ export default function Home() {
             <Accordion
               type="single"
               collapsible
-              className="w-full md:w-[80%] lg:w-[60%]"
+              className="w-full md:w-11/12 lg:w-9/12"
               defaultValue="item-1"
             >
-              {accordionData.map(({ title, description }, index) => (
+              {useCaseData.map(({ title, description }, index) => (
                 <AccordionItem
                   key={title}
                   value={`item-${index + 1}`}
@@ -173,7 +130,23 @@ export default function Home() {
           </div>
         </div>
       </section>
-
+      <section id="pricing" className="bg-light-gray py-20">
+        <div className="container flex flex-col">
+          <div className="flex-center">
+            <PageTile title="Pricing" dotBgColor="bg-pink-400" />
+          </div>
+          <div className="mt-15 flex-center flex-col">
+            <h2 className="main-h2">Flexible Plans for Every Stage</h2>
+            <p className="main-p">
+              Choose a plan that aligns with your needs, from startups to <br />
+              enterprises.
+            </p>
+          </div>
+          <div className="mt-15 flex justify-center">
+            <PricingTableShort />
+          </div>
+        </div>
+      </section>
       {/* <div id="working" className="flex-center flex-col">
             <h2>how it works</h2>
           </div>
