@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { BookOpen, Share2, Shield } from 'lucide-react'
+import Usecases from '@/components/Usecases'
 
 export default function Home() {
   const highligtsCardData = [
@@ -142,10 +143,10 @@ export default function Home() {
                   value={`item-${index + 1}`}
                   className="my-2 rounded-2xl px-5 data-[state=open]:border-[1px] data-[state=open]:border-zinc-400/30 data-[state=closed]:border-none data-[state=open]:bg-white data-[state=open]:py-6"
                 >
-                  <AccordionTrigger className="font-semibold text-lg hover:no-underline data-[state=closed]:text-zinc-600/40 ">
+                  <AccordionTrigger className="font-semibold text-xl hover:no-underline data-[state=closed]:text-zinc-600/40 ">
                     {title}
                   </AccordionTrigger>
-                  <AccordionContent className="flex flex-col gap-4 text-pretty text-md">
+                  <AccordionContent className="flex flex-col gap-4 text-pretty text-base">
                     {description}
                   </AccordionContent>
                 </AccordionItem>
@@ -154,10 +155,21 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section id="usecases" className="bg-light-gray py-20">
+      <section id="usecases" className="bg-white py-20">
         <div className="container flex flex-col">
           <div className="flex-center">
             <PageTile title="Use Cases" dotBgColor="bg-pink-400" />
+          </div>
+          <div className="mt-15 flex-center flex-col">
+            <h2 className="main-h2">Versatile Solutions for Diverse Needs</h2>
+            <p className="main-p">
+              Chatback adapts to various industries, enhancing support and{' '}
+              <br />
+              engagement across the board.
+            </p>
+          </div>
+          <div className="mt-15">
+            <Usecases />
           </div>
         </div>
       </section>
