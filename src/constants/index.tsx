@@ -61,10 +61,11 @@ export const pricingTableItems: PricingProp[] = [
     buttonClassName: '',
     description: 'Plus everything in Hobby',
     features: [
-      '5 custom AI chatbots',
+      '2 custom AI chatbots',
       'Unlimited integrations',
+      '5000 message credits/month',
       '2 MB data storage',
-      'Train on unlimited links/agent',
+      'Train on 5 links/agent',
       'Advanced analytics & usage insights',
       'Priority email & chat support',
       'Custom UI configuration',
