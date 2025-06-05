@@ -1,3 +1,4 @@
+'use client'
 import Footer from '@/components/Footer'
 import PricingTableShort from '@/components/PricingTableShort'
 import Usecases from '@/components/Usecases'
@@ -12,7 +13,15 @@ import {
 import { Button } from '@/components/ui/button'
 import { highligtsCardData, useCaseData } from '@/constants'
 import { cn } from '@/lib/utils'
+import { useRouter } from 'next/navigation'
+
 export default function Home() {
+  const router = useRouter()
+
+  const handleBuildAgent = () => {
+    router.push('/auth/signin')
+  }
+
   return (
     <>
       <main className="relative flex h-[50rem] w-full items-center justify-center bg-white dark:bg-black">
@@ -44,7 +53,10 @@ export default function Home() {
               <br />
               internal wikis, and more — in minutes.
             </p>
-            <Button className="mt-10 cursor-pointer rounded-lg bg-zinc-900 p-5 text-lg text-white shadow-grad">
+            <Button
+              onClick={handleBuildAgent}
+              className="mt-10 cursor-pointer rounded-lg bg-zinc-900 p-5 text-lg text-white shadow-grad"
+            >
               Buid your agent
             </Button>
           </div>

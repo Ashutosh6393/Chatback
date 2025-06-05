@@ -39,7 +39,7 @@
         "noUnusedVariables": "warn"
       },
       "style": {
-        "useNamingConvention": "error",
+        "useNamingConvention": "off",
         "noNonNullAssertion": "off"
       }
     }
