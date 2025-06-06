@@ -14,6 +14,10 @@ const Navbar = () => {
     router.push('/auth/signin')
   }
 
+  const handleSignUp = () => {
+    router.push('/auth/signup')
+  }
+
   return (
     <header className="fixed top-0 z-50 w-full border-zinc-400/10 border-b-[1px] backdrop-blur-lg">
       <div className="container relative flex-center py-4 ">
@@ -45,7 +49,7 @@ const Navbar = () => {
                 Sign in
               </Button>
               <Button
-                onClick={handleSignIn}
+                onClick={handleSignUp}
                 className="cursor-pointer bg-zinc-900 font-bold text-md text-white"
               >
                 Try it for free

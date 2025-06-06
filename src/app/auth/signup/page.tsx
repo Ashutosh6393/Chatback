@@ -19,15 +19,33 @@ const formSchema = z.object({
   email: z.string().email({
     message: 'Please enter a valid email address',
   }),
+  firstName: z
+    .string()
+    .min(1, {
+      message: 'First name is required',
+    })
+    .max(25, {
+      message: 'First name must be less than 25 characters',
+    }),
+  lastName: z
+    .string()
+    .min(1, {
+      message: 'Last name is required',
+    })
+    .max(25, {
+      message: 'Last name must be less than 25 characters',
+    }),
 })
 
 type FormValues = z.infer<typeof formSchema>
 
-const SignInPage = () => {
+const SignUpPage = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
+      firstName: '',
+      lastName: '',
     },
   })
 
@@ -38,14 +56,50 @@ const SignInPage = () => {
   return (
     <div className="flex-center flex-col gap-10 lg:w-1/4">
       <div className="flex-center flex-col gap-2">
-        <h1 className="font-bold text-4xl text-zinc-900">Welcome Back</h1>
+        <h1 className="font-bold text-4xl text-zinc-900">Welcome</h1>
         <p className="text-center text-lg text-muted-foreground">
-          Sign in to your account to continue
+          Sign up to continue
         </p>
       </div>
       <div className="flex w-full flex-col gap-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="firstName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="First name"
+                      {...field}
+                      className="bg-zinc-100 p-6 lg:text-lg"
+                      type="text"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="lastName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      placeholder="Last name"
+                      {...field}
+                      className="bg-zinc-100 p-6 lg:text-lg"
+                      type="email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="email"
@@ -63,8 +117,9 @@ const SignInPage = () => {
                 </FormItem>
               )}
             />
+
             <Button type="submit" className="w-full p-6 text-base ">
-              Sign in
+              Sign up
             </Button>
           </form>
         </Form>
@@ -81,4 +136,4 @@ const SignInPage = () => {
   )
 }
 
-export default SignInPage
+export default SignUpPage
