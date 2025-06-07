@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter, Playfair_Display, Urbanist } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import { Toaster } from '@/components/ui/sonner'
 
 const urbanist = Urbanist({
   variable: '--font-urbanist',
@@ -36,6 +37,7 @@ export default function RootLayout({
       >
         <Navbar />
         {children}
+        <Toaster />
       </body>
     </html>
   )

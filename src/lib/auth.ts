@@ -1,16 +1,22 @@
-import { betterAuth } from 'better-auth'
-import { prismaAdapter } from 'better-auth/adapters/prisma'
-import { db } from './prisma'
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+
+import { db } from "./prisma";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
-    provider: 'postgresql',
+    provider: "postgresql",
   }),
-
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 10,
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-})
+});
