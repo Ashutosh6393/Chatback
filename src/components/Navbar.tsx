@@ -1,26 +1,37 @@
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { authClient } from '@/lib/auth-client'
+import { Loader2 } from 'lucide-react'
 import Image from 'next/image.js'
 import Link from 'next/link.js'
 import { redirect, usePathname, useRouter } from 'next/navigation.js'
-import { authClient } from '@/lib/auth-client'
-import { Loader2 } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const Navbar = () => {
   const pathname = usePathname()
   const isAuthPage = pathname.startsWith('/auth')
   const isHomePage = pathname === '/'
-  const isDashboardPage = pathname === '/dashboard'
+  const isDashboardPage = pathname.startsWith('/dashboard')
   const { data: session, isPending } = authClient.useSession()
-
-
 
   const router = useRouter()
 
   const handleSignIn = () => {
     router.push('/auth/signin')
+  }
+
+  const handleLogout = async () => {
+    await authClient.signOut()
+    router.push('/')
   }
 
   return (
@@ -40,16 +51,13 @@ const Navbar = () => {
         </div>
         {!isAuthPage && (
           <>
-          {
-              isHomePage && (
+            {isHomePage && (
               <nav className="flex-1 flex-center gap-14 font-semibold text-md tracking-wide">
-              <Link href="/">Features </Link>
-              <Link href="/">Pricing</Link>
-              <Link href="/">Contact</Link>
-            </nav>
-            )
-          }
-            
+                <Link href="/">Features </Link>
+                <Link href="/">Pricing</Link>
+                <Link href="/">Contact</Link>
+              </nav>
+            )}
 
             {!isPending ? (
               <div className="flex flex-1 items-center justify-end gap-2">
@@ -64,15 +72,42 @@ const Navbar = () => {
                 )}
                 {session && isDashboardPage && (
                   <div className="flex items-center gap-2">
-                    <Button variant={"link"} className="cursor-pointer text-md  hover:no-underline">
+                    <Button
+                      variant={'link'}
+                      className="cursor-pointer text-md hover:no-underline"
+                    >
                       Help
                     </Button>
-                  <Avatar>
-                    <AvatarImage src={session?.user?.image || ''} />
-                    <AvatarFallback>
-                      {session?.user?.name?.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger>
+                        <Avatar>
+                          <AvatarImage src={session?.user?.image || ''} />
+                          <AvatarFallback>
+                            {session?.user?.name?.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="p-2 font-semibold">
+                        <DropdownMenuLabel>
+                          <p>{session?.user?.name}</p>
+                          <p className="text-muted-foreground text-sm">
+                            {session?.user?.email}
+                          </p>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <Link href="/dashboard">Dashboard</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link href="/settings">Settings</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout}>
+                          Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 )}
                 {!session && (

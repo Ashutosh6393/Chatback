@@ -1,32 +1,32 @@
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
+import { getSessionCookie } from 'better-auth/cookies'
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = ['/dashboard']
 
 export async function middleware(req: NextRequest) {
-  const { nextUrl } = req;
-  const sessionCookie = getSessionCookie(req);
+  const { nextUrl } = req
+  const sessionCookie = getSessionCookie(req)
 
-  const res = NextResponse.next();
+  const res = NextResponse.next()
 
-  const isLoggedIn = !!sessionCookie;
-  const isOnProtectedRoute = protectedRoutes.includes(nextUrl.pathname);
-  const isOnAuthRoute = nextUrl.pathname.startsWith("/auth");
+  const isLoggedIn = !!sessionCookie
+  const isOnProtectedRoute = protectedRoutes.includes(nextUrl.pathname)
+  const isOnAuthRoute = nextUrl.pathname.startsWith('/auth')
 
   if (isOnProtectedRoute && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/auth/signin", req.url));
+    return NextResponse.redirect(new URL('/auth/signin', req.url))
   }
 
   if (isOnAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return NextResponse.redirect(new URL('/dashboard', req.url))
   }
 
-  return res;
+  return res
 }
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
-};
+}
