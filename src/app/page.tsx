@@ -12,14 +12,28 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { highligtsCardData, useCaseData } from '@/constants'
+import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function Home() {
   const router = useRouter()
+  const { data: session, isPending } = authClient.useSession()
+
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleBuildAgent = () => {
-    router.push('/auth/signin')
+    setLoading(true)
+
+    console.log(session)
+    if (!session && !isPending) {
+      router.push('/auth/signin')
+    } else {
+      router.push('/dashboard/create-agent')
+    }
+    setLoading(false)
   }
 
   return (
@@ -57,6 +71,7 @@ export default function Home() {
               onClick={handleBuildAgent}
               className="mt-10 cursor-pointer rounded-lg bg-zinc-900 p-5 text-lg text-white shadow-grad"
             >
+              {loading && <Loader2 className="size-4 animate-spin" />}
               Buid your agent
             </Button>
           </div>

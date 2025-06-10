@@ -63,7 +63,7 @@ const Navbar = () => {
               <div className="flex flex-1 items-center justify-end gap-2">
                 {session && isHomePage && (
                   <Button
-                    onClick={() => redirect('/dashboard')}
+                    onClick={() => redirect('/dashboard/agents')}
                     variant="ghost"
                     className="cursor-pointer font-bold text-md"
                   >
@@ -97,7 +97,7 @@ const Navbar = () => {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                          <Link href="/dashboard">Dashboard</Link>
+                          <Link href="/dashboard/agents">Dashboard</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Link href="/settings">Settings</Link>
@@ -112,13 +112,13 @@ const Navbar = () => {
                 )}
                 {!session && (
                   <>
-                    <Button
+                    {/* <Button
                       onClick={handleSignIn}
                       variant="ghost"
                       className="cursor-pointer font-bold text-md"
                     >
                       Sign in
-                    </Button>
+                    </Button> */}
                     <Button
                       onClick={handleSignIn}
                       className="cursor-pointer bg-zinc-900 font-bold text-md text-white"

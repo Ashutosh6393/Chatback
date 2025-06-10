@@ -1,0 +1,57 @@
+import NavLink from '@/components/common/NavLink'
+import { Button } from '@/components/ui/button'
+import { File, Globe, MessageCircle, Text } from 'lucide-react'
+
+const trainOptions = [
+  { option: 'File', icon: <Text className="size-5" /> },
+  { option: 'Text', icon: <File className="size-5" /> },
+  { option: 'Website', icon: <Globe className="size-5" /> },
+  { option: 'Q&A', icon: <MessageCircle className="size-5" /> },
+]
+
+const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="flex flex-col gap-10">
+      <h1 className="font-extrabold text-3xl">Create New Agent</h1>
+      <div className="flex gap-10">
+        <div className="flex w-1/6 flex-col items-start gap-3 ">
+          {trainOptions.map((option) => (
+            <Button
+              key={option.option}
+              variant="ghost"
+              asChild
+              className="w-full justify-start"
+            >
+              <NavLink
+                href={`/dashboard/create-agent/${option.option}`}
+                className="font-semibold"
+              >
+                {option.icon}
+                {option.option}
+              </NavLink>
+            </Button>
+          ))}
+        </div>
+        <div className="w-3/6">{children}</div>
+        <div className="flex w-2/6 flex-col gap-4 rounded-lg border-[1px] border-zinc-500/40 p-4">
+          <h1 className="font-semibold text-zinc-500">Sources</h1>
+          <div className="flex flex-1 flex-col gap-2">
+            {' '}
+            <div>{}</div>
+            <hr className="border-zinc-500 border-dashed" />
+            <div className="flex justify-between">
+              <p>Total size: </p>
+              <p className="font-bold">0KB</p>
+            </div>
+            <p className="text-right">/ 400KB</p>
+          </div>
+          <Button variant="default" className="w-full cursor-pointer">
+            Create Agent
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default CreateAgentLayout
