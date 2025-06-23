@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button'
 import { File, Globe, MessageCircle, Text } from 'lucide-react'
 
 const trainOptions = [
-  { option: 'File', icon: <Text className="size-5" /> },
-  { option: 'Text', icon: <File className="size-5" /> },
-  { option: 'Website', icon: <Globe className="size-5" /> },
-  { option: 'Q&A', icon: <MessageCircle className="size-5" /> },
+  { option: 'File', icon: <Text className="size-5" />, link: 'file' },
+  { option: 'Text', icon: <File className="size-5" />, link: 'text' },
+  { option: 'Website', icon: <Globe className="size-5" />, link: 'website' },
+  { option: 'Q&A', icon: <MessageCircle className="size-5" />, link: 'qa' },
 ]
 
 const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
@@ -14,7 +14,7 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="flex flex-col gap-10">
       <h1 className="font-extrabold text-3xl">Create New Agent</h1>
       <div className="flex gap-10">
-        <div className="flex w-1/6 flex-col items-start gap-3 ">
+        <div className="flex w-1/6 flex-col items-start gap-3 self-start">
           {trainOptions.map((option) => (
             <Button
               key={option.option}
@@ -23,7 +23,7 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
               className="w-full justify-start"
             >
               <NavLink
-                href={`/dashboard/create-agent/${option.option}`}
+                href={`/dashboard/create-agent/${option.link}`}
                 className="font-semibold"
               >
                 {option.icon}
@@ -32,11 +32,12 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
             </Button>
           ))}
         </div>
-        <div className="w-3/6">{children}</div>
-        <div className="flex w-2/6 flex-col gap-4 rounded-lg border-[1px] border-zinc-500/40 p-4">
+        <div className="w-3/6 rounded-lg border-[1px] border-zinc-500/40 p-4">
+          {children}
+        </div>
+        <div className="flex w-2/6 flex-col gap-4 rounded-lg border-[1px] border-zinc-500/40 p-4 self-start">
           <h1 className="font-semibold text-zinc-500">Sources</h1>
           <div className="flex flex-1 flex-col gap-2">
-            {' '}
             <div>{}</div>
             <hr className="border-zinc-500 border-dashed" />
             <div className="flex justify-between">

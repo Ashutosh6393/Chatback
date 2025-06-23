@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { authClient } from '@/lib/auth-client'
+import { scrollToElement } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 import Image from 'next/image.js'
 import Link from 'next/link.js'
@@ -53,9 +54,27 @@ const Navbar = () => {
           <>
             {isHomePage && (
               <nav className="flex-1 flex-center gap-14 font-semibold text-md tracking-wide">
-                <Link href="/">Features </Link>
-                <Link href="/">Pricing</Link>
-                <Link href="/">Contact</Link>
+                <Button
+                  variant="link"
+                  onClick={() => scrollToElement('highlights')}
+                  className="cursor-pointer p-0 font-semibold hover:no-underline"
+                >
+                  Features
+                </Button>
+                <Button
+                  variant="link"
+                  onClick={() => scrollToElement('pricing')}
+                  className="cursor-pointer p-0 font-semibold hover:no-underline"
+                >
+                  Pricing
+                </Button>
+                <Button
+                  variant="link"
+                  onClick={() => scrollToElement('contact')}
+                  className="cursor-pointer p-0 font-semibold hover:no-underline"
+                >
+                  Contact
+                </Button>
               </nav>
             )}
 

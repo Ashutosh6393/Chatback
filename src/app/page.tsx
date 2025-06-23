@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { highligtsCardData, useCaseData } from '@/constants'
 import { authClient } from '@/lib/auth-client'
-import { cn } from '@/lib/utils'
+import { cn, scrollToElement } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -49,10 +49,11 @@ export default function Home() {
         />
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-black" />
 
-        <div className="container z-40">
+        <div className="container z-40 scroll-smooth">
           <div id="hero" className="min-h-[680px] flex-center flex-col">
             <Button
               variant={'outline'}
+              onClick={() => scrollToElement('working')}
               className="mb-10 cursor-pointer rounded-full px-12 text-foreground/70 text-md shadow-none hover:bg-background"
             >
               See How It Works
