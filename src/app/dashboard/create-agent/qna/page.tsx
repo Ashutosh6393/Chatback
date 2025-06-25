@@ -17,15 +17,16 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  text: z.string().min(2).max(20000),
+  question: z.string().min(2).max(500),
+  answer: z.string().min(2).max(20000),
 })
-const TextPage = () => {
+
+const QnaPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      text: '',
+      question: '',
+      answer: '',
     },
   })
 
@@ -34,14 +35,14 @@ const TextPage = () => {
     // ✅ This will be type-safe and validated.
     console.log(values)
   }
-
   return (
     <div>
       <div className="flex flex-col gap-2">
-        <h3 className="font-semibold text-xl">Text</h3>
+        <h3 className="font-semibold text-xl">Q&A</h3>
         <p className="text-zinc-500 font-medium">
-          Add and process plain text-based sources to train your AI Agent with
-          precise information.
+          Craft responses for important questions, ensuring your AI Agent shares
+          the most relevant info. Use Custom Answers to add images and videos
+          for enhanced engagement.
         </p>
       </div>
       <div>
@@ -52,15 +53,16 @@ const TextPage = () => {
           >
             <FormField
               control={form.control}
-              name="title"
+              name="question"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-semibold text-zinc-600">
-                    Title
+                    Question
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ex: Refund Policy"
+                      placeholder="Ex: What is your refund policy?"
+                      type="text"
                       className="shadow-none"
                       {...field}
                     />
@@ -72,11 +74,11 @@ const TextPage = () => {
 
             <FormField
               control={form.control}
-              name="text"
+              name="answer"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-semibold text-zinc-600">
-                    Text
+                    Answer
                   </FormLabel>
                   <FormControl>
                     <Textarea {...field} />
@@ -86,7 +88,7 @@ const TextPage = () => {
               )}
             />
             <Button type="submit" className="self-end">
-              Save
+              Add
             </Button>
           </form>
         </Form>
@@ -95,4 +97,4 @@ const TextPage = () => {
   )
 }
 
-export default TextPage
+export default QnaPage

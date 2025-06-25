@@ -3,24 +3,21 @@
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-
-import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   text: z.string().min(2).max(20000),
 })
-const TextPage = () => {
+
+const FilePage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,10 +35,10 @@ const TextPage = () => {
   return (
     <div>
       <div className="flex flex-col gap-2">
-        <h3 className="font-semibold text-xl">Text</h3>
+        <h3 className="font-semibold text-xl">File</h3>
         <p className="text-zinc-500 font-medium">
-          Add and process plain text-based sources to train your AI Agent with
-          precise information.
+          The Files tab allows you to upload and manage various document types
+          to train your AI agent.
         </p>
       </div>
       <div>
@@ -55,13 +52,11 @@ const TextPage = () => {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-semibold text-zinc-600">
-                    Title
-                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ex: Refund Policy"
-                      className="shadow-none"
+                      type="file"
+                      accept=".pdf,.doc,.docx,.txt"
+                      className="shadow-none "
                       {...field}
                     />
                   </FormControl>
@@ -69,25 +64,10 @@ const TextPage = () => {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name="text"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold text-zinc-600">
-                    Text
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="self-end">
-              Save
-            </Button>
+            <p className="text-zinc-500 font-normal text-sm text-center px-5">
+              If you are uploading a PDF, make sure you can select/highlight the
+              text. <br /> Allowed file types: .pdf, .doc, .docx, .txt
+            </p>
           </form>
         </Form>
       </div>
@@ -95,4 +75,4 @@ const TextPage = () => {
   )
 }
 
-export default TextPage
+export default FilePage

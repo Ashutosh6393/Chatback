@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, Urbanist } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import { Toaster } from '@/components/ui/sonner'
+import { EdgeStoreProvider } from '../lib/edgestore'
 
 const urbanist = Urbanist({
   variable: '--font-urbanist',
@@ -35,9 +36,11 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${inter.variable} ${urbanist.variable} ${urbanist.className} antialiased`}
       >
-        <Navbar />
-        {children}
-        <Toaster />
+        <EdgeStoreProvider>
+          <Navbar />
+          {children}
+          <Toaster />
+        </EdgeStoreProvider>
       </body>
     </html>
   )

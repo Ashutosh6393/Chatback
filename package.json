@@ -11,6 +11,8 @@
     "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@edgestore/react": "^0.5.2",
+    "@edgestore/server": "^0.5.2",
     "@hookform/resolvers": "^5.0.1",
     "@neondatabase/serverless": "^1.0.0",
     "@prisma/client": "^6.8.2",

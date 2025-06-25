@@ -14,18 +14,16 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 
 const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  text: z.string().min(2).max(20000),
+  link: z.string().url().min(2).max(200),
 })
-const TextPage = () => {
+
+const WebsitePage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      text: '',
+      link: '',
     },
   })
 
@@ -34,16 +32,16 @@ const TextPage = () => {
     // ✅ This will be type-safe and validated.
     console.log(values)
   }
-
   return (
     <div>
       <div className="flex flex-col gap-2">
-        <h3 className="font-semibold text-xl">Text</h3>
+        <h3 className="font-semibold text-xl">Website</h3>
         <p className="text-zinc-500 font-medium">
-          Add and process plain text-based sources to train your AI Agent with
-          precise information.
+          Crawl specific web pages and gain insights from their content to
+          enhance your AI Agent's knowledge base.
         </p>
       </div>
+
       <div>
         <Form {...form}>
           <form
@@ -52,15 +50,16 @@ const TextPage = () => {
           >
             <FormField
               control={form.control}
-              name="title"
+              name="link"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="font-semibold text-zinc-600">
-                    Title
+                    Link
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ex: Refund Policy"
+                      type="url"
+                      placeholder="Ex: https://example.com"
                       className="shadow-none"
                       {...field}
                     />
@@ -70,23 +69,8 @@ const TextPage = () => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="text"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold text-zinc-600">
-                    Text
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <Button type="submit" className="self-end">
-              Save
+              Fetch Link
             </Button>
           </form>
         </Form>
@@ -95,4 +79,4 @@ const TextPage = () => {
   )
 }
 
-export default TextPage
+export default WebsitePage
