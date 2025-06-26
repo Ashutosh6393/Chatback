@@ -19,14 +19,13 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  // SaaS related
+  subscription Subscription?
+  credits      Int           @default(100) // number of messages/user interactions allowed
+  creditsUsed  Int           @default(0)
 
-    // SaaS related
-  subscription  Subscription?
-  credits       Int       @default(100) // number of messages/user interactions allowed
-  creditsUsed   Int       @default(0)
-
-  agents        Agent[]
-  chatMessages  ChatMessage[]
+  agents       Agent[]
+  chatMessages ChatMessage[]
 
   @@unique([email])
   @@map("user")
@@ -78,53 +77,66 @@ model Verification {
 }
 
 model Subscription {
-  id            String   @id @default(cuid())
-  user          User     @relation(fields: [userId], references: [id])
-  userId        String   @unique
-  plan          String   // "free", "pro", "enterprise"
-  priceId       String?  // Stripe price id (if using Stripe)
-  status        String   // "active", "canceled", etc.
-  startedAt     DateTime @default(now())
+  id               String   @id @default(cuid())
+  user             User     @relation(fields: [userId], references: [id])
+  userId           String   @unique
+  plan             String // "free", "pro", "enterprise"
+  priceId          String? // Stripe price id (if using Stripe)
+  status           String // "active", "canceled", etc.
+  startedAt        DateTime @default(now())
   currentPeriodEnd DateTime
 }
 
 model Agent {
-  id            String        @id @default(cuid())
-  user          User          @relation(fields: [userId], references: [id])
-  userId        String
-  name          String
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // sources of knowledge
-  pdfUrls       String[]      // S3/Cloud links to PDFs
-  webLinks      String[]      // List of URLs
-  qnaSource     String?       // Optional path to QnA CSV
+  pdfUrls   String[] // S3/Cloud links to PDFs
+  webLinks  String[] // List of URLs
+  qnaSource String? // Optional path to QnA CSV
+  textSource String? // Optional text source
+  apiKey     String    @unique
+  isTrained  Boolean   @default(false)
+  trainingAt DateTime?
 
-  apiKey        String        @unique
-  isTrained     Boolean       @default(false)
-  trainingAt    DateTime?
+  usage AgentUsage?
+  chats ChatMessage[]
+  Qna   Qna[]
+}
 
-  usage         AgentUsage?
-  chats         ChatMessage[]
+model Qna {
+  id        String   @id @default(cuid())
+  agent     Agent    @relation(fields: [agentId], references: [id])
+  agentId   String
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([agentId, question])
 }
 
 model AgentUsage {
-  id        String   @id @default(cuid())
-  agent     Agent    @relation(fields: [agentId], references: [id])
-  agentId   String   @unique
-  totalRequests Int  @default(0)
+  id            String    @id @default(cuid())
+  agent         Agent     @relation(fields: [agentId], references: [id])
+  agentId       String    @unique
+  totalRequests Int       @default(0)
   lastUsedAt    DateTime?
 }
 
 model ChatMessage {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  agent     Agent    @relation(fields: [agentId], references: [id])
-  agentId   String
+  id      String @id @default(cuid())
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+  agent   Agent  @relation(fields: [agentId], references: [id])
+  agentId String
 
-  role      Role     // "user" | "assistant"
+  role      Role // "user" | "assistant"
   content   String
   createdAt DateTime @default(now())
 }
@@ -133,6 +145,5 @@ enum Role {
   user
   assistant
 }
-
 
 // DGMAX15 HADOMAIN
