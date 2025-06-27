@@ -1,13 +1,13 @@
-import NavLink from '@/components/common/NavLink'
-import { Button } from '@/components/ui/button'
-import { File, Globe, MessageCircle, Text } from 'lucide-react'
+import NavLink from "@/components/common/NavLink";
+import { Button } from "@/components/ui/button";
+import { File, Globe, MessageCircle, Text } from "lucide-react";
 
 const trainOptions = [
-  { option: 'File', icon: <Text className="size-5" />, link: 'file' },
-  { option: 'Text', icon: <File className="size-5" />, link: 'text' },
-  { option: 'Website', icon: <Globe className="size-5" />, link: 'website' },
-  { option: 'Q&A', icon: <MessageCircle className="size-5" />, link: 'qna' },
-]
+  { option: "File", icon: <File className="size-5" />, link: "file" },
+  { option: "Text", icon: <Text className="size-5" />, link: "text" },
+  { option: "Website", icon: <Globe className="size-5" />, link: "website" },
+  { option: "Q&A", icon: <MessageCircle className="size-5" />, link: "qna" },
+];
 
 const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -52,7 +52,7 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateAgentLayout
+export default CreateAgentLayout;
