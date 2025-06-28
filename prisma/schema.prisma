@@ -78,13 +78,14 @@ model Verification {
 
 model Subscription {
   id               String   @id @default(cuid())
-  user             User     @relation(fields: [userId], references: [id])
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           String   @unique
-  plan             String // "free", "pro", "enterprise"
+  plan             String // "free","hobby" "pro", "enterprise"
   priceId          String? // Stripe price id (if using Stripe)
   status           String // "active", "canceled", etc.
   startedAt        DateTime @default(now())
-  currentPeriodEnd DateTime
+  updatedAt        DateTime @updatedAt
+  currentPeriodEnd DateTime? 
 }
 
 model Agent {
@@ -145,5 +146,3 @@ enum Role {
   user
   assistant
 }
-
-// DGMAX15 HADOMAIN
