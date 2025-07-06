@@ -21,25 +21,29 @@ export const auth = betterAuth({
   },
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      if (!ctx.path.startsWith("/sign-up")) return;
+      const session = ctx.context.newSession;
+      if (!session) return;
 
-      const newSession = ctx.context.newSession;
-      if (!newSession) return;
+      const userId = session.user.id;
 
-      const userId = newSession.user.id;
-      // const now = new Date();
-      const defaultPlan = "free";
-      // const durationInMonths = defaultPlan === "free" ? 0 : 1;
-
-      await db.subscription.create({
-        data: {
-          userId,
-          plan: defaultPlan,
-          status: "active",
-          // currentPeriodEnd: addMonths(now, durationInMonths),
-          currentPeriodEnd: null,
-        },
+      // Check if subscription exists
+      const existing = await db.subscription.findUnique({
+        where: { userId },
       });
+
+      if (!existing) {
+        console.log("Creating subscription for user:", userId);
+        await db.subscription.create({
+          data: {
+            userId,
+            plan: "free",
+            status: "active",
+            currentPeriodEnd: null,
+          },
+        });
+      } else {
+        console.log("Subscription already exists for user:", userId);
+      }
     }),
   },
 });

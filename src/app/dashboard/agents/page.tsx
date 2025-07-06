@@ -1,6 +1,7 @@
-import { Button } from '@/components/ui/button'
+'use client'
 import { BotMessageSquare } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 const agents: { id: number; name: string; description: string }[] = [
   // {

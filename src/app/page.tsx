@@ -1,9 +1,13 @@
 'use client'
+import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
+import HighlightCard from '@/components/common/HighlightCard'
+import PageTile from '@/components/common/PageTile'
 import Footer from '@/components/Footer'
 import PricingTableShort from '@/components/PricingTableShort'
 import Usecases from '@/components/Usecases'
-import HighlightCard from '@/components/common/HighlightCard'
-import PageTile from '@/components/common/PageTile'
 import {
   Accordion,
   AccordionContent,
@@ -14,9 +18,6 @@ import { Button } from '@/components/ui/button'
 import { highligtsCardData, useCaseData } from '@/constants'
 import { authClient } from '@/lib/auth-client'
 import { cn, scrollToElement } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 export default function Home() {
   const router = useRouter()

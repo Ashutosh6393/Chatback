@@ -1,7 +1,7 @@
-ignoredBuiltDependencies:
-  - esbuild
 onlyBuiltDependencies:
-  - '@biomejs/biome'
   - '@prisma/client'
   - '@prisma/engines'
+  - '@tailwindcss/oxide'
+  - esbuild
   - prisma
+  - sharp

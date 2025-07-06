@@ -1,5 +1,9 @@
 'use client'
 
+import { Loader2 } from 'lucide-react'
+import Image from 'next/image.js'
+import Link from 'next/link.js'
+import { redirect, usePathname, useRouter } from 'next/navigation.js'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,16 +16,23 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { authClient } from '@/lib/auth-client'
 import { scrollToElement } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
-import Image from 'next/image.js'
-import Link from 'next/link.js'
-import { redirect, usePathname, useRouter } from 'next/navigation.js'
 
 const Navbar = () => {
   const pathname = usePathname()
   const isAuthPage = pathname.startsWith('/auth')
   const isHomePage = pathname === '/'
   const isDashboardPage = pathname.startsWith('/dashboard')
+
+  const Auth = {
+    isAuthenticated: true,
+    user: {
+      id: 'adsf',
+      name: 'hello',
+      email: 'adfa',
+      image: '',
+    },
+  }
+
   const { data: session, isPending } = authClient.useSession()
 
   const router = useRouter()
@@ -80,7 +91,7 @@ const Navbar = () => {
 
             {!isPending ? (
               <div className="flex flex-1 items-center justify-end gap-2">
-                {session && isHomePage && (
+                {Auth.isAuthenticated && isHomePage && (
                   <Button
                     onClick={() => redirect('/dashboard/agents')}
                     variant="ghost"
@@ -89,7 +100,7 @@ const Navbar = () => {
                     Dashboard
                   </Button>
                 )}
-                {session && isDashboardPage && (
+                {Auth.isAuthenticated && isDashboardPage && (
                   <div className="flex items-center gap-2">
                     <Button
                       variant={'link'}
@@ -101,17 +112,17 @@ const Navbar = () => {
                     <DropdownMenu>
                       <DropdownMenuTrigger>
                         <Avatar>
-                          <AvatarImage src={session?.user?.image || ''} />
+                          <AvatarImage src={Auth.user.image || ''} />
                           <AvatarFallback>
-                            {session?.user?.name?.charAt(0)}
+                            {Auth.user.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="p-2 font-semibold">
                         <DropdownMenuLabel>
-                          <p>{session?.user?.name}</p>
+                          <p>{Auth.user.name}</p>
                           <p className="text-muted-foreground text-sm">
-                            {session?.user?.email}
+                            {Auth.user.email}
                           </p>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
