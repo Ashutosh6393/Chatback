@@ -1,7 +1,7 @@
 'use client'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import HighlightCard from '@/components/common/HighlightCard'
 import PageTile from '@/components/common/PageTile'
@@ -16,20 +16,18 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { highligtsCardData, useCaseData } from '@/constants'
-import { authClient } from '@/lib/auth-client'
 import { cn, scrollToElement } from '@/lib/utils'
+import { useAuthStore } from '@/store/globalStore'
 
 export default function Home() {
   const router = useRouter()
-  const { data: session, isPending } = authClient.useSession()
-
   const [loading, setLoading] = useState<boolean>(false)
+  const { isAuthenticated } = useAuthStore()
 
   const handleBuildAgent = () => {
     setLoading(true)
-
-    console.log(session)
-    if (!session && !isPending) {
+    // console.log(session)
+    if (!isAuthenticated) {
       router.push('/auth/signin')
     } else {
       router.push('/dashboard/create-agent')

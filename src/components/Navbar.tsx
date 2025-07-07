@@ -1,9 +1,10 @@
 'use client'
 
 import { Loader2 } from 'lucide-react'
-import Image from 'next/image.js'
-import Link from 'next/link.js'
+import Image from 'next/image'
+import Link from 'next/link'
 import { redirect, usePathname, useRouter } from 'next/navigation.js'
+import { memo } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,24 +17,19 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { authClient } from '@/lib/auth-client'
 import { scrollToElement } from '@/lib/utils'
+import { useAuthStore } from '@/store/globalStore'
 
-const Navbar = () => {
+const Navbar = memo(() => {
   const pathname = usePathname()
   const isAuthPage = pathname.startsWith('/auth')
   const isHomePage = pathname === '/'
   const isDashboardPage = pathname.startsWith('/dashboard')
 
-  const Auth = {
-    isAuthenticated: true,
-    user: {
-      id: 'adsf',
-      name: 'hello',
-      email: 'adfa',
-      image: '',
-    },
-  }
+  const { isAuthenticated, user, logout } = useAuthStore()
 
-  const { data: session, isPending } = authClient.useSession()
+  console.log(user)
+
+  const { isPending } = authClient.useSession()
 
   const router = useRouter()
 
@@ -43,6 +39,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await authClient.signOut()
+    logout()
     router.push('/')
   }
 
@@ -91,7 +88,7 @@ const Navbar = () => {
 
             {!isPending ? (
               <div className="flex flex-1 items-center justify-end gap-2">
-                {Auth.isAuthenticated && isHomePage && (
+                {isAuthenticated && isHomePage && (
                   <Button
                     onClick={() => redirect('/dashboard/agents')}
                     variant="ghost"
@@ -100,7 +97,7 @@ const Navbar = () => {
                     Dashboard
                   </Button>
                 )}
-                {Auth.isAuthenticated && isDashboardPage && (
+                {isAuthenticated && isDashboardPage && (
                   <div className="flex items-center gap-2">
                     <Button
                       variant={'link'}
@@ -112,17 +109,17 @@ const Navbar = () => {
                     <DropdownMenu>
                       <DropdownMenuTrigger>
                         <Avatar>
-                          <AvatarImage src={Auth.user.image || ''} />
+                          <AvatarImage src={user?.image || ''} />
                           <AvatarFallback>
-                            {Auth.user.name.charAt(0)}
+                            {user?.name.charAt(0)}
                           </AvatarFallback>
                         </Avatar>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="p-2 font-semibold">
                         <DropdownMenuLabel>
-                          <p>{Auth.user.name}</p>
+                          <p>{user?.name}</p>
                           <p className="text-muted-foreground text-sm">
-                            {Auth.user.email}
+                            {user?.email}
                           </p>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
@@ -140,7 +137,7 @@ const Navbar = () => {
                     </DropdownMenu>
                   </div>
                 )}
-                {!session && (
+                {!isAuthenticated && (
                   <>
                     {/* <Button
                       onClick={handleSignIn}
@@ -168,6 +165,6 @@ const Navbar = () => {
       </div>
     </header>
   )
-}
+})
 
 export default Navbar

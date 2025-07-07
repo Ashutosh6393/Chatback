@@ -1,16 +1,23 @@
-import { atom } from "recoil";
+import { create } from "zustand";
 
-const authState = atom({
-  key: "AuthState",
-  default: {
-    isAuthenticated: false,
-    user: {
-      id: "",
-      name: "",
-      email: "",
-      image: "",
-    },
-  },
-});
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+}
 
-export { authState };
+interface authStoreType {
+  isAuthenticated: boolean;
+  user: User | null;
+
+  setAuth: (userData: { isAuthenticated: boolean; user: User | null }) => void;
+  logout: () => void;
+}
+
+export const useAuthStore = create<authStoreType>((set) => ({
+  isAuthenticated: false,
+  user: null,
+  setAuth: (authData) => set(authData),
+  logout: () => set({ isAuthenticated: false, user: null }),
+}));

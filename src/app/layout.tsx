@@ -3,7 +3,8 @@ import { Inter, Playfair_Display, Urbanist } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import { Toaster } from '@/components/ui/sonner'
-import { EdgeStoreProvider } from '../lib/edgestore'
+import { EdgeStoreProvider } from '@/lib/edgestore'
+import ClientWrapper from './ClientWrapper'
 
 const urbanist = Urbanist({
   variable: '--font-urbanist',
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
     'Chatback is a platform for chatting with your friends and family',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
@@ -37,9 +38,11 @@ export default function RootLayout({
         className={`${playfair.variable} ${inter.variable} ${urbanist.variable} ${urbanist.className} antialiased`}
       >
         <EdgeStoreProvider>
-          <Navbar />
-          {children}
-          <Toaster />
+          <ClientWrapper>
+            <Navbar />
+            {children}
+            <Toaster />
+          </ClientWrapper>
         </EdgeStoreProvider>
       </body>
     </html>
