@@ -1,7 +1,20 @@
 'use client'
 import { BotMessageSquare } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation.js'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 const agents: { id: number; name: string; description: string }[] = [
   // {
@@ -12,13 +25,67 @@ const agents: { id: number; name: string; description: string }[] = [
 ]
 
 const AgentsPage = () => {
+  const router = useRouter()
+
+  const createAgentHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const name = formData.get('name') as string
+    const description = formData.get('description') as string
+
+    // Here you would typically send the data to your backend to create the agent
+    console.log('Creating agent:', { name, description })
+
+    // Reset the form or close the dialog after creation
+    event.currentTarget.reset()
+
+    router.push('/dashboard/agents/create-agent/file')
+  }
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex items-center justify-between px-10">
         <h1 className="font-extrabold text-3xl">AI Agents</h1>
-        <Button asChild>
-          <Link href="/dashboard/create-agent">Create Agent</Link>
-        </Button>
+
+        <Dialog>
+          <form>
+            <DialogTrigger asChild>
+              <Button variant="default">Create Agent</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create Agent</DialogTitle>
+                <DialogDescription>
+                  Provide the name and description of the Agent.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4">
+                <div className="grid gap-3">
+                  <Label htmlFor="name-1">Name</Label>
+                  <Input
+                    id="name-1"
+                    name="name"
+                    placeholder="Customer Support"
+                  />
+                </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="username-1">Description (optional)</Label>
+                  <Input
+                    id="username-1"
+                    name="username"
+                    placeholder="This agent is responsible for customer support."
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type="submit">Create</Button>
+              </DialogFooter>
+            </DialogContent>
+          </form>
+        </Dialog>
       </div>
       {agents.length === 0 ? (
         <div className="flex h-full flex-1 flex-center">

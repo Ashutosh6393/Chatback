@@ -93,6 +93,7 @@ model Agent {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   name      String
+  description String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

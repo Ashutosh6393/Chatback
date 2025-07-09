@@ -1,18 +1,31 @@
-import NavLink from "@/components/common/NavLink";
-import { Button } from "@/components/ui/button";
-import { File, Globe, MessageCircle, Text } from "lucide-react";
+'use client'
+import { ArrowLeft, File, Globe, MessageCircle, Text } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import NavLink from '@/components/common/NavLink'
+import { Button } from '@/components/ui/button'
 
 const trainOptions = [
-  { option: "File", icon: <File className="size-5" />, link: "file" },
-  { option: "Text", icon: <Text className="size-5" />, link: "text" },
-  { option: "Website", icon: <Globe className="size-5" />, link: "website" },
-  { option: "Q&A", icon: <MessageCircle className="size-5" />, link: "qna" },
-];
+  { option: 'File', icon: <File className="size-5" />, link: 'file' },
+  { option: 'Text', icon: <Text className="size-5" />, link: 'text' },
+  { option: 'Website', icon: <Globe className="size-5" />, link: 'website' },
+  { option: 'Q&A', icon: <MessageCircle className="size-5" />, link: 'qna' },
+]
 
 const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter()
+
+  const handleBackClick = () => {
+    router.push('/dashboard/agents')
+  }
+
   return (
     <div className="flex flex-col gap-10">
-      <h1 className="font-extrabold text-3xl">Create New Agent</h1>
+      <div className="flex gap-4 ">
+        <Button variant={'ghost'} onClick={handleBackClick} size={'icon'}>
+          <ArrowLeft />
+        </Button>
+        <h1 className="font-extrabold text-3xl">Create New Agent</h1>
+      </div>
       <div className="flex gap-10">
         <div className="flex w-1/6 flex-col items-start gap-3 self-start">
           {trainOptions.map((option) => (
@@ -52,7 +65,7 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CreateAgentLayout;
+export default CreateAgentLayout
