@@ -30,7 +30,7 @@ export default function Home() {
     if (!isAuthenticated) {
       router.push('/auth/signin')
     } else {
-      router.push('/dashboard/create-agent')
+      router.push('/dashboard/agents?create=true')
     }
     setLoading(false)
   }

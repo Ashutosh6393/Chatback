@@ -1,22 +1,23 @@
-"use client";
+'use client'
 
-import { Dropzone } from "@/components/upload/dropzone";
+import * as React from 'react'
+import { toast } from 'sonner'
+import Drop from '@/components/Drop'
+import { Dropzone } from '@/components/upload/dropzone'
 import {
   UploaderProvider,
   type UploadFn,
-} from "@/components/upload/uploader-provider";
-import { useEdgeStore } from "@/lib/edgestore";
-import * as React from "react";
-import { toast } from "sonner";
-import FileUploads from "./FileUploads";
+} from '@/components/upload/uploader-provider'
+import { useEdgeStore } from '@/lib/edgestore'
+import FileUploads from './FileUploads'
 
 const FilePage = () => {
-  const { edgestore } = useEdgeStore();
-  const [uploading, setUploading] = React.useState(false);
+  const { edgestore } = useEdgeStore()
+  const [uploading, setUploading] = React.useState(false)
 
   const uploadFn: UploadFn = React.useCallback(
     async ({ file, onProgressChange, signal }) => {
-      setUploading(true);
+      setUploading(true)
 
       const res = await edgestore.publicFiles
         .upload({
@@ -24,13 +25,13 @@ const FilePage = () => {
           signal,
           onProgressChange,
         })
-        .finally(() => setUploading(false));
-      toast.success(`File ${file.name} uploaded successfully!`);
-      console.log(res);
-      return res;
+        .finally(() => setUploading(false))
+      toast.success(`File ${file.name} uploaded successfully!`)
+      console.log(res)
+      return res
     },
-    [edgestore]
-  );
+    [edgestore],
+  )
 
   return (
     <div>
@@ -43,6 +44,10 @@ const FilePage = () => {
           </p>
         </div>
         <div className="mt-4">
+          <Drop />
+        </div>
+
+        {/* <div className="mt-4">
           <Dropzone
             disabled={uploading}
             className="border-[1px] border-zinc-400 h-50"
@@ -61,10 +66,10 @@ const FilePage = () => {
             text.
           </p>
         </div>
-        <FileUploads />
+        <FileUploads /> */}
       </UploaderProvider>
     </div>
-  );
-};
+  )
+}
 
-export default FilePage;
+export default FilePage

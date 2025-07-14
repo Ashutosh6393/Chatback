@@ -34,7 +34,7 @@
         "noAssignInExpressions": "warn"
       },
       "correctness": {
-        "noUnusedImports": "warn",
+        "noUnusedImports": "off",
         "noUnusedVariables": "warn"
       },
       "style": {

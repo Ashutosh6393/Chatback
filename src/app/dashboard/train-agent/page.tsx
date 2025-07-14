@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 
 const CreateAgentPage = () => {
-  redirect('/dashboard/create-agent/file')
+  redirect('/dashboard/agents')
 }
 
 export default CreateAgentPage

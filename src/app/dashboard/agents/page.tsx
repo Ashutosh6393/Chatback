@@ -1,7 +1,13 @@
 'use client'
-import { BotMessageSquare } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation.js'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { BotMessageSquare, LoaderIcon } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation.js'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+import { createAgent } from '@/app/actions/createAgent'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -13,8 +19,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useAuthStore } from '@/store/globalStore'
+
+const formSchema = z.object({
+  agentName: z.string().min(2, {
+    message: 'Agent name must be at least 2 characters.',
+  }),
+  agentDescription: z
+    .string()
+    .min(5, { message: 'Description must be at least 5 characters.' }),
+})
 
 const agents: { id: number; name: string; description: string }[] = [
   // {
@@ -25,21 +48,53 @@ const agents: { id: number; name: string; description: string }[] = [
 ]
 
 const AgentsPage = () => {
+  const [modelOpen, setModelOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const searchParams = useSearchParams()
+  const { user } = useAuthStore()
   const router = useRouter()
 
-  const createAgentHandler = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const name = formData.get('name') as string
-    const description = formData.get('description') as string
+  useEffect(() => {
+    if (searchParams.get('create') === 'true') {
+      setModelOpen(true)
+      router.replace('/dashboard/agents')
+    }
+  }, [searchParams, router])
 
-    // Here you would typically send the data to your backend to create the agent
-    console.log('Creating agent:', { name, description })
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      agentName: '',
+      agentDescription: '',
+    },
+  })
 
-    // Reset the form or close the dialog after creation
-    event.currentTarget.reset()
+  const handleClose = () => {
+    form.reset()
+    setModelOpen(!modelOpen)
+  }
 
-    router.push('/dashboard/agents/create-agent/file')
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setLoading(true)
+      const newAgent = await createAgent(
+        user!.id,
+        values.agentName,
+        values.agentDescription,
+      )
+
+      if (newAgent) {
+        console.log('Agent create successfully', newAgent)
+        router.push(`/dashboard/train-agent/${newAgent.id}/file`)
+      }
+    } catch (error) {
+      console.error('Error creating agent:', error)
+      toast.error('Failed to create agent.')
+    } finally {
+      setLoading(false)
+      handleClose()
+    }
   }
 
   return (
@@ -47,44 +102,67 @@ const AgentsPage = () => {
       <div className="flex items-center justify-between px-10">
         <h1 className="font-extrabold text-3xl">AI Agents</h1>
 
-        <Dialog>
-          <form>
-            <DialogTrigger asChild>
-              <Button variant="default">Create Agent</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Create Agent</DialogTitle>
-                <DialogDescription>
-                  Provide the name and description of the Agent.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4">
-                <div className="grid gap-3">
-                  <Label htmlFor="name-1">Name</Label>
-                  <Input
-                    id="name-1"
-                    name="name"
-                    placeholder="Customer Support"
-                  />
-                </div>
-                <div className="grid gap-3">
-                  <Label htmlFor="username-1">Description (optional)</Label>
-                  <Input
-                    id="username-1"
-                    name="username"
-                    placeholder="This agent is responsible for customer support."
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button type="submit">Create</Button>
-              </DialogFooter>
-            </DialogContent>
-          </form>
+        <Dialog open={modelOpen} onOpenChange={handleClose}>
+          <DialogTrigger asChild>
+            <Button variant="default">Create Agent</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] ">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
+                <DialogHeader>
+                  <DialogTitle>Create Agent</DialogTitle>
+                  <DialogDescription>
+                    Provide the name and description of the Agent.
+                  </DialogDescription>
+                </DialogHeader>
+                <FormField
+                  control={form.control}
+                  name="agentName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Agent Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Customer Support" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="agentDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Chatbot for handling customer queries."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button type="submit" disabled={loading}>
+                    <LoaderIcon
+                      className={`animate-spin ${loading ? 'block' : 'hidden'}`}
+                    />
+                    Create
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
         </Dialog>
       </div>
       {agents.length === 0 ? (
