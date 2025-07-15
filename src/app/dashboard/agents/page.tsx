@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { BotMessageSquare, LoaderIcon } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation.js'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -28,7 +28,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAgentStore } from '@/store/agentStore'
 import { useAuthStore } from '@/store/globalStore'
+import AgentSkeleton from './AgentSkeleton'
 
 const formSchema = z.object({
   agentName: z.string().min(2, {
@@ -39,13 +41,13 @@ const formSchema = z.object({
     .min(5, { message: 'Description must be at least 5 characters.' }),
 })
 
-const agents: { id: number; name: string; description: string }[] = [
-  // {
-  //   id: 1,
-  //   name: 'Agent 1',
-  //   description: 'Agent 1 description',
-  // },
-]
+// const agents: { id: number; name: string; description: string }[] = [
+//   // {
+//   //   id: 1,
+//   //   name: 'Agent 1',
+//   //   description: 'Agent 1 description',
+//   // },
+// ]
 
 const AgentsPage = () => {
   const [modelOpen, setModelOpen] = useState(false)
@@ -53,6 +55,7 @@ const AgentsPage = () => {
 
   const searchParams = useSearchParams()
   const { user } = useAuthStore()
+  const { agents, setAgents } = useAgentStore()
   const router = useRouter()
 
   useEffect(() => {
@@ -165,26 +168,7 @@ const AgentsPage = () => {
           </DialogContent>
         </Dialog>
       </div>
-      {agents.length === 0 ? (
-        <div className="flex h-full flex-1 flex-center">
-          <p className="text-gray-500">No agents found</p>
-        </div>
-      ) : (
-        <div className="flex flex-1 flex-start flex-wrap gap-10 px-20">
-          {agents.map((agent) => (
-            <div
-              key={agent.id}
-              className="flex h-40 w-30 flex-col items-center rounded-2xl border-[1px] border-gray-200 bg-light-gray p-4"
-            >
-              <div className="flex flex-1 flex-center">
-                <BotMessageSquare size={50} className="text-zinc-800" />
-              </div>
-
-              <h2>{agent.name}</h2>
-            </div>
-          ))}
-        </div>
-      )}
+      <Suspense fallback={<AgentSkeleton />} />
     </div>
   )
 }

@@ -36,7 +36,7 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
               className="w-full justify-start"
             >
               <NavLink
-                href={`/dashboard/create-agent/${option.link}`}
+                href={`/dashboard/create-agent/${/[A-Za-z0-9]+/i}/${option.link}`}
                 className="font-semibold"
               >
                 {option.icon}
