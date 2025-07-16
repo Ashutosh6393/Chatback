@@ -30,6 +30,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { useAgentStore } from '@/store/agentStore'
 import { useAuthStore } from '@/store/globalStore'
+import AgentList from './AgentList'
 import AgentSkeleton from './AgentSkeleton'
 
 const formSchema = z.object({
@@ -40,14 +41,6 @@ const formSchema = z.object({
     .string()
     .min(5, { message: 'Description must be at least 5 characters.' }),
 })
-
-// const agents: { id: number; name: string; description: string }[] = [
-//   // {
-//   //   id: 1,
-//   //   name: 'Agent 1',
-//   //   description: 'Agent 1 description',
-//   // },
-// ]
 
 const AgentsPage = () => {
   const [modelOpen, setModelOpen] = useState(false)
@@ -99,6 +92,12 @@ const AgentsPage = () => {
       handleClose()
     }
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      console.log('hello after 3 sec')
+    }, 3000)
+  })
 
   return (
     <div className="flex flex-col gap-10">
@@ -156,6 +155,7 @@ const AgentsPage = () => {
                       Cancel
                     </Button>
                   </DialogClose>
+                  ``
                   <Button type="submit" disabled={loading}>
                     <LoaderIcon
                       className={`animate-spin ${loading ? 'block' : 'hidden'}`}
@@ -168,7 +168,9 @@ const AgentsPage = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <Suspense fallback={<AgentSkeleton />} />
+      <Suspense fallback={<AgentSkeleton />}>
+        <AgentList />
+      </Suspense>
     </div>
   )
 }

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display, Urbanist } from 'next/font/google'
 import './globals.css'
-import Navbar from '@/components/Navbar'
+import Navbar from '@/components/Navbar/Navbar'
 import { Toaster } from '@/components/ui/sonner'
-import { EdgeStoreProvider } from '@/lib/edgestore'
+import { authClient } from '@/lib/auth-client'
 import ClientWrapper from './ClientWrapper'
 
 const urbanist = Urbanist({
@@ -32,18 +32,18 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // const { data } = authClient.useSession()
+
   return (
     <html lang="en">
       <body
         className={`${playfair.variable} ${inter.variable} ${urbanist.variable} ${urbanist.className} antialiased`}
       >
-        <EdgeStoreProvider>
-          <ClientWrapper>
-            <Navbar />
-            {children}
-            <Toaster />
-          </ClientWrapper>
-        </EdgeStoreProvider>
+        {/* <ClientWrapper> */}
+        <Navbar />
+        {children}
+        <Toaster />
+        {/* </ClientWrapper> */}
       </body>
     </html>
   )

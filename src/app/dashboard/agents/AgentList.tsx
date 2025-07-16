@@ -1,9 +1,8 @@
 'use client'
 
 import { BotMessageSquare } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { getAgents } from '@/app/actions/getAgents'
 import { useAgentStore } from '@/store/agentStore'
 import { useAuthStore } from '@/store/globalStore'
 
@@ -11,19 +10,32 @@ const AgentList = () => {
   const { agents, setAgents } = useAgentStore()
   const { user } = useAuthStore()
 
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
+    setLoading(true)
+
     const fetchAgents = async () => {
       try {
-        const agents = await getAgents(user!.id)
-        setAgents(agents)
+        const response = await fetch(`/api/agents?userId=${user?.id}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch agents')
+        }
+        const data = await response.json()
+        setAgents(data)
+        console.log('Fetched agents:', data)
+
+        // setAgents(await response.json());
       } catch (error) {
         console.error('Error fetching agents:', error)
         toast.error('Failed to fetch agents.')
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchAgents()
-  }, [user])
+  }, [user, setAgents])
 
   return (
     <>

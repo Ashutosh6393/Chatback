@@ -1,18 +1,12 @@
-// import type {  } from "@prisma/client";
-
-import type { Agent } from '@prisma/client'
-import { create } from 'zustand'
-import { db } from '../lib/prisma'
-
-type Agentv
-: db.agent
+import { Agent } from "@/generated/prisma/index";
+import { create } from "zustand";
 
 interface AgentStoreType {
-  agents: Agent[] | null
-  setAgents: (agents: Agent[]) => void
+  agents: Agent[] | null;
+  setAgents: (agents: Agent[]) => void;
 }
 
 export const useAgentStore = create<AgentStoreType>((set) => ({
   agents: null,
   setAgents: (agents) => set({ agents }),
-}))
+}));

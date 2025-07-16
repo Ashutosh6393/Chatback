@@ -1,7 +1,7 @@
 // app/actions/agent.ts
 "use server";
 
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import { db } from "@/lib/prisma"; // your prisma wrapper
 
 export async function createAgent(
