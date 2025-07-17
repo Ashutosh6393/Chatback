@@ -1,46 +1,47 @@
 'use client'
 
 import type { User } from 'better-auth'
-import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import Spinner from '@/components/common/Spinner'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/lib/auth-client'
 import { scrollToElement } from '@/lib/utils'
 import { useAuthStore } from '@/store/globalStore'
 import NavDropdown from './NavDropdown'
 
-export default function AuthStatus() {
+type Props = {
+  user: User | null
+}
+
+export default function AuthStatus({ user }: Props) {
   const pathname = usePathname()
   const isHomePage = pathname === '/'
   const isDashboardPage = pathname.startsWith('/dashboard')
+  const isAuthPage = pathname.startsWith('/auth')
 
-  const { isPending, data: session } = authClient.useSession()
   const { setAuth, logout, isAuthenticated } = useAuthStore()
   const router = useRouter()
 
   useEffect(() => {
-    if (session) {
+    if (!isAuthenticated && user) {
       setAuth({
         isAuthenticated: true,
         user: {
-          id: session.user.id,
-          name: session.user.name,
-          email: session.user.email,
-          image: session.user.image || '',
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image || '',
         },
       })
     } else {
       logout()
+      //changes the auth state to null
     }
-  }, [session, setAuth, logout])
+  }, [logout, user, setAuth])
 
-  if (isPending) {
-    return <Loader2 className="animate-spin size-5 text-muted-foreground" />
-  }
-
-  if (!session) {
+  if (!user && !isAuthPage) {
     return (
       <Button
         onClick={() => router.push('/auth/signin')}
@@ -52,16 +53,7 @@ export default function AuthStatus() {
   }
 
   if (isDashboardPage) {
-    return (
-      <NavDropdown
-        user={session?.user || null}
-        onLogout={async () => {
-          router.push('/')
-          logout()
-          await authClient.signOut()
-        }}
-      />
-    )
+    return <NavDropdown user={user} />
   }
 
   if (isHomePage) {
