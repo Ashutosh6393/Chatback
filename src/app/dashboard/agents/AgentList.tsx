@@ -1,11 +1,11 @@
 'use client'
-import { BotMessageSquare } from 'lucide-react'
+import { Bot } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 // import { headers } from 'next/headers'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { getAgents } from '@/app/actions/getAgents'
+import { Button } from '@/components/ui/button'
 import { useAgentStore } from '@/store/agentStore'
-import { useAuthStore } from '@/store/globalStore'
 import AgentSkeleton from './AgentSkeleton'
 
 type Props = {
@@ -15,6 +15,12 @@ type Props = {
 const AgentList = ({ userId }: Props) => {
   const [loading, setLoading] = useState<boolean>(true)
   const { setAgents, agents } = useAgentStore()
+
+  const router = useRouter()
+
+  function handleAgentClick(agentId: string) {
+    router.push(`/dashboard/train-agent/${agentId}/file`)
+  }
 
   // console.log('userId from agentList: ', userId)
 
@@ -59,17 +65,27 @@ const AgentList = ({ userId }: Props) => {
   return (
     <>
       <div className="flex flex-1 flex-start flex-wrap gap-10">
-        {agents.map((agent) => (
-          <div
+        {agents.map((agent, index) => (
+          <Button
+            asChild
             key={agent.id}
-            className="flex h-40 w-30 flex-col items-center rounded-2xl border-[1px] border-gray-200 bg-light-gray p-4"
+            variant={'outline'}
+            onClick={() => handleAgentClick(agent.id)}
+            className="p-4"
           >
-            <div className="flex flex-1 flex-center">
-              <BotMessageSquare size={50} className="text-zinc-800" />
-            </div>
+            <div className="flex h-40 w-1/3 flex-col items-start justify-start rounded-2xl border-[1px] gap-3 border-gray-200 bg-light-gray ">
+              <Bot className="text-zinc-800 size-10" />
 
-            <h2>{agent.name}</h2>
-          </div>
+              <div className="flex-1 w-full">
+                <h2 className="text-xl font-semibold text-zinc-700 capitalize">
+                  {agent.name}
+                </h2>
+                <p className="text-sm font-medium text-muted-foreground">
+                  {agent.description}
+                </p>
+              </div>
+            </div>
+          </Button>
         ))}
       </div>
     </>

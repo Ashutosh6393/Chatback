@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
-  const isCreateAgentPage = pathname.includes('/create-agent')
+  const isCreateAgentPage = pathname.includes('/train-agent')
 
   return (
     <div className="container flex h-screen w-full flex-col items-center pt-20 ">
