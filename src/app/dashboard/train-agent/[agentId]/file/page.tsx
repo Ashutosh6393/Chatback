@@ -13,7 +13,7 @@ import FileUploads from './FileUploads'
 
 const FilePage = () => {
   const { edgestore } = useEdgeStore()
-  const [uploading, setUploading] = React.useState(false)
+  const [_uploading, setUploading] = React.useState(false)
 
   const uploadFn: UploadFn = React.useCallback(
     async ({ file, onProgressChange, signal }) => {
@@ -38,7 +38,7 @@ const FilePage = () => {
       <UploaderProvider uploadFn={uploadFn}>
         <div className="flex flex-col gap-2">
           <h3 className="font-semibold text-xl">File</h3>
-          <p className="text-zinc-500 font-medium">
+          <p className="font-medium text-zinc-500">
             The Files tab allows you to upload and manage various document types
             to train your AI agent.
           </p>

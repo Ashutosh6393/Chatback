@@ -1,66 +1,83 @@
 'use client'
-
 import { BotMessageSquare } from 'lucide-react'
+// import { headers } from 'next/headers'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { getAgents } from '@/app/actions/getAgents'
 import { useAgentStore } from '@/store/agentStore'
 import { useAuthStore } from '@/store/globalStore'
+import AgentSkeleton from './AgentSkeleton'
 
-const AgentList = () => {
-  const { agents, setAgents } = useAgentStore()
-  const { user } = useAuthStore()
+type Props = {
+  userId: string
+}
 
-  const [loading, setLoading] = useState(false)
+const AgentList = ({ userId }: Props) => {
+  const [loading, setLoading] = useState<boolean>(true)
+  const { setAgents, agents } = useAgentStore()
+
+  // console.log('userId from agentList: ', userId)
 
   useEffect(() => {
-    setLoading(true)
-
-    const fetchAgents = async () => {
+    const loadData = async () => {
       try {
-        const response = await fetch(`/api/agents?userId=${user?.id}`)
-        if (!response.ok) {
-          throw new Error('Failed to fetch agents')
-        }
-        const data = await response.json()
-        setAgents(data)
-        console.log('Fetched agents:', data)
+        const agents = await fetch(`/api/agents?userId=${userId}`).then((res) =>
+          res.json(),
+        )
 
-        // setAgents(await response.json());
+        console.log('agents from agentlist: ', agents)
+        setAgents(agents)
       } catch (error) {
-        console.error('Error fetching agents:', error)
-        toast.error('Failed to fetch agents.')
+        console.error('Failed to load agents: ', error)
+        toast.error('Failed to load agents. Please try again later.')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchAgents()
-  }, [user, setAgents])
+    if (userId) {
+      loadData()
+    }
+  }, [userId])
+
+  if (loading) {
+    return (
+      <div className="flex h-full flex-1 flex-center">
+        <AgentSkeleton />
+      </div>
+    )
+  }
+
+  if (!agents?.length) {
+    return (
+      <div className="flex h-full flex-1 flex-center">
+        <p className="text-gray-500">No agents found</p>
+      </div>
+    )
+  }
 
   return (
     <>
-      {!agents ? (
-        <div className="flex h-full flex-1 flex-center">
-          <p className="text-gray-500">No agents found</p>
-        </div>
-      ) : (
-        <div className="flex flex-1 flex-start flex-wrap gap-10 px-20">
-          {agents.map((agent) => (
-            <div
-              key={agent.id}
-              className="flex h-40 w-30 flex-col items-center rounded-2xl border-[1px] border-gray-200 bg-light-gray p-4"
-            >
-              <div className="flex flex-1 flex-center">
-                <BotMessageSquare size={50} className="text-zinc-800" />
-              </div>
-
-              <h2>{agent.name}</h2>
+      <div className="flex flex-1 flex-start flex-wrap gap-10">
+        {agents.map((agent) => (
+          <div
+            key={agent.id}
+            className="flex h-40 w-30 flex-col items-center rounded-2xl border-[1px] border-gray-200 bg-light-gray p-4"
+          >
+            <div className="flex flex-1 flex-center">
+              <BotMessageSquare size={50} className="text-zinc-800" />
             </div>
-          ))}
-        </div>
-      )}
+
+            <h2>{agent.name}</h2>
+          </div>
+        ))}
+      </div>
     </>
   )
 }
 
 export default AgentList
+
+// Todo: Optimize fetching agents (pagination can be added later), caching could be done,
+// todo: and we can use useOptimistic to updtate the UI immediately after creating an agent.
+// todo: check if the agent is already in the store before fetching it again.

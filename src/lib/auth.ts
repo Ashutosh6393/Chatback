@@ -1,11 +1,11 @@
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { createAuthMiddleware } from "better-auth/api";
-import { db } from "./prisma";
+import { betterAuth } from 'better-auth'
+import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { createAuthMiddleware } from 'better-auth/api'
+import { db } from './prisma'
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
-    provider: "postgresql",
+    provider: 'postgresql',
   }),
   session: {
     cookieCache: {
@@ -21,29 +21,29 @@ export const auth = betterAuth({
   },
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
-      const session = ctx.context.newSession;
-      if (!session) return;
+      const session = ctx.context.newSession
+      if (!session) return
 
-      const userId = session.user.id;
+      const userId = session.user.id
 
       // Check if subscription exists
       const existing = await db.subscription.findUnique({
         where: { userId },
-      });
+      })
 
       if (!existing) {
-        console.log("Creating subscription for user:", userId);
+        console.log('Creating subscription for user:', userId)
         await db.subscription.create({
           data: {
             userId,
-            plan: "free",
-            status: "active",
+            plan: 'free',
+            status: 'active',
             currentPeriodEnd: null,
           },
-        });
+        })
       } else {
-        console.log("Subscription already exists for user:", userId);
+        console.log('Subscription already exists for user:', userId)
       }
     }),
   },
-});
+})

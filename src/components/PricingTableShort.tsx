@@ -1,7 +1,7 @@
+import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { pricingTableItems } from '@/constants'
 import type { PricingProp } from '@/types'
-import { Check } from 'lucide-react'
 
 export default function PricingTableShort() {
   return (

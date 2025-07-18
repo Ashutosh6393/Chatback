@@ -48,7 +48,6 @@ const AgentsPage = () => {
 
   const searchParams = useSearchParams()
   const { user } = useAuthStore()
-  const { agents, setAgents } = useAgentStore()
   const router = useRouter()
 
   useEffect(() => {
@@ -93,15 +92,9 @@ const AgentsPage = () => {
     }
   }
 
-  useEffect(() => {
-    setTimeout(() => {
-      console.log('hello after 3 sec')
-    }, 3000)
-  })
-
   return (
     <div className="flex flex-col gap-10">
-      <div className="flex items-center justify-between px-10">
+      <div className="flex items-center justify-between ">
         <h1 className="font-extrabold text-3xl">AI Agents</h1>
 
         <Dialog open={modelOpen} onOpenChange={handleClose}>
@@ -155,7 +148,6 @@ const AgentsPage = () => {
                       Cancel
                     </Button>
                   </DialogClose>
-                  ``
                   <Button type="submit" disabled={loading}>
                     <LoaderIcon
                       className={`animate-spin ${loading ? 'block' : 'hidden'}`}
@@ -168,9 +160,13 @@ const AgentsPage = () => {
           </DialogContent>
         </Dialog>
       </div>
+
       <Suspense fallback={<AgentSkeleton />}>
-        <AgentList />
+        {user?.id ? <AgentList userId={user.id} /> : null}
       </Suspense>
+      {/* <Suspense fallback={<AgentSkeleton />}>
+        <AgentList />
+      </Suspense> */}
     </div>
   )
 }

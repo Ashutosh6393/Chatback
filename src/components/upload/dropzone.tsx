@@ -1,9 +1,9 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { AlertCircleIcon, UploadCloudIcon } from 'lucide-react'
 import * as React from 'react'
-import { useDropzone, type DropzoneOptions } from 'react-dropzone'
+import { type DropzoneOptions, useDropzone } from 'react-dropzone'
+import { cn } from '@/lib/utils'
 import { formatFileSize, useUploader } from './uploader-provider'
 
 const DROPZONE_VARIANTS = {
@@ -151,7 +151,7 @@ const Dropzone = React.forwardRef<HTMLInputElement, DropzoneProps>(
           <input ref={ref} {...getInputProps()} {...props} />
           <div className="flex flex-col items-center justify-center gap-2 text-center text-muted-foreground">
             <UploadCloudIcon className="h-10 w-10" />
-            <div className="text-sm font-medium">
+            <div className="font-medium text-sm">
               {isDragActive ? dropMessageActive : dropMessageDefault}
             </div>
             {(!!maxSize || !!maxFiles) && (
@@ -166,7 +166,7 @@ const Dropzone = React.forwardRef<HTMLInputElement, DropzoneProps>(
 
         {/* Error Text */}
         {error && (
-          <div className="mt-1 flex items-center text-xs text-destructive">
+          <div className="mt-1 flex items-center text-destructive text-xs">
             <AlertCircleIcon className="mr-1 h-4 w-4" />
             <span>{error}</span>
           </div>

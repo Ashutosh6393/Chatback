@@ -1,5 +1,5 @@
-import { cn } from '@/lib/utils';
-import * as React from 'react';
+import * as React from 'react'
+import { cn } from '@/lib/utils'
 
 /**
  * Props for the ProgressCircle component.
@@ -12,19 +12,19 @@ export interface ProgressCircleProps
   /**
    * The progress value as a percentage (0-100).
    */
-  progress: number;
+  progress: number
 
   /**
    * The diameter of the circle in pixels.
    * @default 48
    */
-  size?: number;
+  size?: number
 
   /**
    * The width of the progress stroke in pixels.
    * @default 4
    */
-  strokeWidth?: number;
+  strokeWidth?: number
 }
 
 /**
@@ -39,9 +39,9 @@ export interface ProgressCircleProps
  */
 const ProgressCircle = React.forwardRef<HTMLDivElement, ProgressCircleProps>(
   ({ progress, size = 48, strokeWidth = 4, className, ...props }, ref) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (progress / 100) * circumference;
+    const radius = (size - strokeWidth) / 2
+    const circumference = 2 * Math.PI * radius
+    const offset = circumference - (progress / 100) * circumference
 
     return (
       <div
@@ -57,12 +57,14 @@ const ProgressCircle = React.forwardRef<HTMLDivElement, ProgressCircleProps>(
         {...props}
       >
         <svg
+          aria-label="Progress Circle"
           className="absolute" // Position SVG centered relative to the div
           width={size}
           height={size}
           viewBox={`0 0 ${size} ${size}`}
           style={{ transform: 'rotate(-90deg)' }} // Start from top
         >
+          <title id="progress-circle-title">Progress Circle</title>
           {/* Background track */}
           <circle
             cx={size / 2}
@@ -84,11 +86,11 @@ const ProgressCircle = React.forwardRef<HTMLDivElement, ProgressCircleProps>(
           />
         </svg>
         {/* Progress Percentage Text (centered visually) */}
-        <div className="z-10 text-xs font-medium">{Math.round(progress)}%</div>
+        <div className="z-10 font-medium text-xs">{Math.round(progress)}%</div>
       </div>
-    );
+    )
   },
-);
-ProgressCircle.displayName = 'ProgressCircle';
+)
+ProgressCircle.displayName = 'ProgressCircle'
 
-export { ProgressCircle };
+export { ProgressCircle }

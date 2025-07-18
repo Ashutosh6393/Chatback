@@ -1,7 +1,6 @@
 'use client'
 
 import type { User } from 'better-auth'
-import { Loader2 } from 'lucide-react'
 import { memo, Suspense } from 'react'
 import Spinner from '@/components/common/Spinner'
 import AuthStatus from './AuthStatus'

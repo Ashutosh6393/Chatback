@@ -26,7 +26,6 @@ export default function Home() {
 
   const handleBuildAgent = () => {
     setLoading(true)
-    // console.log(session)
     if (!isAuthenticated) {
       router.push('/auth/signin')
     } else {

@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/lib/utils' // Optional: for conditional classnames
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils' // Optional: for conditional classnames
 
 type NavLinkProps = {
   href: string

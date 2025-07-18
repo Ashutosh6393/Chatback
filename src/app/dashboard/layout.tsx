@@ -1,13 +1,12 @@
 'use client'
 
-import NavLink from '@/components/common/NavLink'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import NavLink from '@/components/common/NavLink'
+import { Button } from '@/components/ui/button'
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
-
   const isCreateAgentPage = pathname.includes('/create-agent')
 
   return (
@@ -28,9 +27,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         ''
       )}
 
-      <div className="w-full flex-1 py-4"> 
-        
-        {children}</div>
+      <div className="w-full flex-1 py-4">{children}</div>
     </div>
   )
 }

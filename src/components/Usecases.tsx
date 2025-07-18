@@ -1,5 +1,4 @@
 'use client'
-import { GlowingEffect } from '@/components/ui/glowing-effect'
 import {
   Briefcase,
   GraduationCap,
@@ -7,6 +6,7 @@ import {
   ShoppingCart,
   UserCheck,
 } from 'lucide-react'
+import { GlowingEffect } from '@/components/ui/glowing-effect'
 
 export default function Usecases() {
   return (

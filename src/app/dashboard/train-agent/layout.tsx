@@ -48,7 +48,7 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="w-3/6 rounded-lg border-[1px] border-zinc-500/40 p-4">
           {children}
         </div>
-        <div className="flex w-2/6 flex-col gap-4 rounded-lg border-[1px] border-zinc-500/40 p-4 self-start">
+        <div className="flex w-2/6 flex-col gap-4 self-start rounded-lg border-[1px] border-zinc-500/40 p-4">
           <h1 className="font-semibold text-zinc-500">Sources</h1>
           <div className="flex flex-1 flex-col gap-2">
             <div>{}</div>

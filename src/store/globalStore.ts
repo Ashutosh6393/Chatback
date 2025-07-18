@@ -1,18 +1,18 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  image: string;
+  id: string
+  name: string
+  email: string
+  image: string
 }
 
 interface authStoreType {
-  isAuthenticated: boolean;
-  user: User | null;
+  isAuthenticated: boolean
+  user: User | null
 
-  setAuth: (userData: { isAuthenticated: boolean; user: User | null }) => void;
-  logout: () => void;
+  setAuth: (userData: { isAuthenticated: boolean; user: User | null }) => void
+  logout: () => void
 }
 
 export const useAuthStore = create<authStoreType>((set) => ({
@@ -20,4 +20,4 @@ export const useAuthStore = create<authStoreType>((set) => ({
   user: null,
   setAuth: (authData) => set(authData),
   logout: () => set({ isAuthenticated: false, user: null }),
-}));
+}))

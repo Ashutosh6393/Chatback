@@ -1,7 +1,7 @@
 'use client'
+import { FcGoogle } from 'react-icons/fc'
 import { Button } from '@/components/ui/button'
 import { googleSignIn } from '@/lib/google-signin'
-import { FcGoogle } from 'react-icons/fc'
 
 const SignInPage = () => {
   return (

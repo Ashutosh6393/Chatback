@@ -109,15 +109,15 @@ export default function Component() {
     <div className="flex flex-col gap-2">
       {/* Drop area */}
       <button
+        type="button"
         tabIndex={0}
-        role="button"
         onClick={openFileDialog}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
-        className="border-input hover:bg-accent/50 data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 flex min-h-40 flex-col items-center justify-center rounded-xl border border-dashed p-4 transition-colors has-disabled:pointer-events-none has-disabled:opacity-50 has-[input:focus]:ring-[3px]"
+        className="flex min-h-40 flex-col items-center justify-center rounded-xl border border-input border-dashed p-4 transition-colors hover:bg-accent/50 has-disabled:pointer-events-none has-[input:focus]:border-ring has-disabled:opacity-50 has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50 data-[dragging=true]:bg-accent/50"
       >
         <input
           {...getInputProps()}
@@ -127,16 +127,16 @@ export default function Component() {
 
         <div className="flex flex-col items-center justify-center text-center">
           <div
-            className="bg-background mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border"
+            className="mb-2 flex size-11 shrink-0 items-center justify-center rounded-full border bg-background"
             aria-hidden="true"
           >
             <FileUpIcon className="size-4 opacity-60" />
           </div>
-          <p className="mb-1.5 text-sm font-medium">Upload files</p>
-          <p className="text-muted-foreground mb-2 text-xs">
+          <p className="mb-1.5 font-medium text-sm">Upload files</p>
+          <p className="mb-2 text-muted-foreground text-xs">
             Drag & drop or click to browse
           </p>
-          <div className="text-muted-foreground/70 flex flex-wrap justify-center gap-1 text-xs">
+          <div className="flex flex-wrap justify-center gap-1 text-muted-foreground/70 text-xs">
             <span>Pdf, Word, Text files only.</span>
             <span>∙</span>
             <span>Max {maxFiles} files</span>
@@ -148,7 +148,7 @@ export default function Component() {
 
       {errors.length > 0 && (
         <div
-          className="text-destructive flex items-center gap-1 text-xs"
+          className="flex items-center gap-1 text-destructive text-xs"
           role="alert"
         >
           <AlertCircleIcon className="size-3 shrink-0" />
@@ -162,14 +162,14 @@ export default function Component() {
           {files.map((file) => (
             <div
               key={file.id}
-              className="bg-background flex items-center justify-between gap-2 rounded-lg border p-2 pe-3"
+              className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
                   {getFileIcon(file)}
                 </div>
                 <div className="flex min-w-0 flex-col gap-0.5">
-                  <p className="truncate text-[13px] font-medium">
+                  <p className="truncate font-medium text-[13px]">
                     {file.file instanceof File
                       ? file.file.name
                       : file.file.name}
@@ -187,7 +187,7 @@ export default function Component() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-muted-foreground/80 hover:text-foreground -me-2 size-8 hover:bg-transparent"
+                className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
                 onClick={() => removeFile(file.id)}
                 aria-label="Remove file"
               >

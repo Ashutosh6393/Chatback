@@ -1,13 +1,13 @@
 // app/actions/agent.ts
-"use server";
+'use server'
 
-import { randomUUID } from "node:crypto";
-import { db } from "@/lib/prisma"; // your prisma wrapper
+import { randomUUID } from 'node:crypto'
+import { db } from '@/lib/prisma' // your prisma wrapper
 
 export async function createAgent(
   userId: string,
   name: string,
-  description?: string
+  description?: string,
 ) {
   const newAgent = await db.agent.create({
     data: {
@@ -19,7 +19,7 @@ export async function createAgent(
         create: {},
       },
     },
-  });
+  })
 
-  return newAgent;
+  return newAgent
 }

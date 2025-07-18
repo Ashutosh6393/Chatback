@@ -4,9 +4,7 @@ import type { User } from 'better-auth'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import Spinner from '@/components/common/Spinner'
 import { Button } from '@/components/ui/button'
-import { authClient } from '@/lib/auth-client'
 import { scrollToElement } from '@/lib/utils'
 import { useAuthStore } from '@/store/globalStore'
 import NavDropdown from './NavDropdown'
@@ -21,6 +19,7 @@ export default function AuthStatus({ user }: Props) {
   const isDashboardPage = pathname.startsWith('/dashboard')
   const isAuthPage = pathname.startsWith('/auth')
 
+  // console.log('User in AuthStatus:', user)
   const { setAuth, logout, isAuthenticated } = useAuthStore()
   const router = useRouter()
 
@@ -82,7 +81,7 @@ export default function AuthStatus({ user }: Props) {
             Contact
           </Button>
         </nav>
-        <div className="flex-1 flex items-center justify-end gap-2">
+        <div className="flex flex-1 items-center justify-end gap-2">
           <Button asChild variant="ghost" className="font-bold text-md">
             <Link href="/dashboard/agents">Dashboard</Link>
           </Button>
