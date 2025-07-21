@@ -1,6 +1,6 @@
 'use client'
 import { ArrowLeft, File, Globe, MessageCircle, Text } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import NavLink from '@/components/common/NavLink'
 import { Button } from '@/components/ui/button'
 
@@ -13,6 +13,9 @@ const trainOptions = [
 
 const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
+  const params = useParams()
+
+  const agentId = params?.agentId as string
 
   const handleBackClick = () => {
     router.push('/dashboard/agents')
@@ -36,7 +39,7 @@ const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
               className="w-full justify-start"
             >
               <NavLink
-                href={`/dashboard/create-agent/${/[A-Za-z0-9]+/i}/${option.link}`}
+                href={`/dashboard/train-agent/${agentId}/${option.link}`}
                 className="font-semibold"
               >
                 {option.icon}

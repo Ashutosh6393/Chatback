@@ -1,18 +1,24 @@
 'use client'
-
 import {
   AlertCircleIcon,
+  Eye,
   FileArchiveIcon,
   FileIcon,
   FileSpreadsheetIcon,
   FileTextIcon,
   FileUpIcon,
-  HeadphonesIcon,
-  ImageIcon,
-  VideoIcon,
   XIcon,
 } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import Spinner from '@/components/common/Spinner'
 import { Button } from '@/components/ui/button'
+import {
+  type FileState,
+  UploaderProvider,
+  type UploadFn,
+  useUploader,
+} from '@/components/upload/uploader-provider'
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
 
 // Create some dummy initial files
@@ -68,32 +74,60 @@ const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
   ) {
     return <FileSpreadsheetIcon className="size-4 opacity-60" />
   }
-  if (fileType.includes('video/')) {
-    return <VideoIcon className="size-4 opacity-60" />
-  }
-  if (fileType.includes('audio/')) {
-    return <HeadphonesIcon className="size-4 opacity-60" />
-  }
-  if (fileType.startsWith('image/')) {
-    return <ImageIcon className="size-4 opacity-60" />
-  }
   return <FileIcon className="size-4 opacity-60" />
 }
 
 export default function Component() {
+  const {
+    fileStates, // Array of current file states
+    addFiles, // Function to add files
+    removeFile, // Function to remove a file by key
+    cancelUpload, // Function to cancel an upload by key
+    uploadFiles, // Function to trigger uploads (all pending or specific keys)
+    isUploading, // Boolean indicating if any upload is in progress
+  } = useUploader()
+
+  function handleAddFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    e.preventDefault()
+    if (!e.target.files) return
+    addFiles(Array.from(e.target.files))
+    e.target.value = ''
+  }
+
+  function handleRemoveFile(fileState: FileState) {
+    if (fileState.status === 'UPLOADING') {
+      cancelUpload(fileState.key)
+    } else if (fileState.status === 'COMPLETE') {
+      // delete file from db and server
+    }
+    removeFile(fileState.key)
+  }
+
+  async function handleUploadFiles() {
+    const uploadPromise = Promise.all(
+      fileStates
+        .filter((fileState) => fileState.status === 'PENDING')
+        .map((fileState) => uploadFiles([fileState.key])),
+    )
+
+    toast.promise(uploadPromise, {
+      loading: 'Uploading files...',
+      success: 'Files uploaded successfully!',
+      error: 'Failed to upload files',
+    })
+  }
+
   const maxSize = 2 * 1024 * 1024 // 10MB default
   const maxFiles = 1
 
   const [
-    { files, isDragging, errors },
+    { isDragging, errors },
     {
       handleDragEnter,
       handleDragLeave,
       handleDragOver,
       handleDrop,
       openFileDialog,
-      removeFile,
-      clearFiles,
       getInputProps,
     },
   ] = useFileUpload({
@@ -102,7 +136,6 @@ export default function Component() {
     multiple: true,
     maxFiles,
     maxSize,
-    initialFiles,
   })
 
   return (
@@ -123,6 +156,7 @@ export default function Component() {
           {...getInputProps()}
           className="sr-only"
           aria-label="Upload files"
+          onChange={handleAddFiles}
         />
 
         <div className="flex flex-col items-center justify-center text-center">
@@ -152,55 +186,77 @@ export default function Component() {
           role="alert"
         >
           <AlertCircleIcon className="size-3 shrink-0" />
+
           <span>{errors[0]}</span>
         </div>
       )}
 
       {/* File list */}
-      {files.length > 0 && (
+
+      {fileStates.length > 0 && (
         <div className="space-y-2">
-          {files.map((file) => (
+          {fileStates.map((fileState) => (
             <div
-              key={file.id}
+              key={fileState.key}
               className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
-                  {getFileIcon(file)}
+                  {getFileIcon({ file: fileState.file })}
                 </div>
                 <div className="flex min-w-0 flex-col gap-0.5">
                   <p className="truncate font-medium text-[13px]">
-                    {file.file instanceof File
-                      ? file.file.name
-                      : file.file.name}
+                    {fileState.file.name}
                   </p>
                   <p className="text-muted-foreground text-xs">
-                    {formatBytes(
-                      file.file instanceof File
-                        ? file.file.size
-                        : file.file.size,
-                    )}
+                    {formatBytes(fileState.file.size)}
                   </p>
+                  {fileState.status === 'ERROR' && (
+                    <div
+                      className="flex items-center gap-1 text-destructive text-xs"
+                      role="alert"
+                    >
+                      <AlertCircleIcon className="size-3 shrink-0" />
+
+                      <span>{fileState.error}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              <Button
-                size="icon"
-                variant="ghost"
-                className="-me-2 size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
-                onClick={() => removeFile(file.id)}
-                aria-label="Remove file"
-              >
-                <XIcon className="size-4" aria-hidden="true" />
-              </Button>
+              <div className="flex items-center gap-2">
+                {fileState.status === 'COMPLETE' && fileState.url && (
+                  <a
+                    href={fileState.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-zinc-800 font-semibold hover:text-foreground"
+                  >
+                    <Eye className="size-5 text-foreground/80 hover:text-foreground" />
+                  </a>
+                )}
+                {fileState.status === 'UPLOADING' && (
+                  <span className="text-sm text-zinc-800 ">
+                    {fileState.progress}%
+                  </span>
+                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="-me-2 cursor-pointer size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
+                  onClick={() => handleRemoveFile(fileState)}
+                  aria-label="Remove file"
+                >
+                  <XIcon className="size-4" aria-hidden="true" />
+                </Button>
+              </div>
             </div>
           ))}
 
-          {/* Remove all files button */}
-          {files.length > 1 && (
-            <div>
-              <Button size="sm" variant="outline" onClick={clearFiles}>
-                Remove all files
+          {fileStates.length > 0 && (
+            <div className="mt-4">
+              <Button size="sm" variant="default" onClick={handleUploadFiles}>
+                Upload
               </Button>
             </div>
           )}

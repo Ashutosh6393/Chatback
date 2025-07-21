@@ -65,13 +65,13 @@ const AgentList = ({ userId }: Props) => {
   return (
     <>
       <div className="flex flex-1 flex-start flex-wrap gap-10">
-        {agents.map((agent, index) => (
+        {agents.map((agent) => (
           <Button
             asChild
             key={agent.id}
             variant={'outline'}
             onClick={() => handleAgentClick(agent.id)}
-            className="p-4"
+            className="p-4 cursor-pointer"
           >
             <div className="flex h-40 w-1/3 flex-col items-start justify-start rounded-2xl border-[1px] gap-3 border-gray-200 bg-light-gray ">
               <Bot className="text-zinc-800 size-10" />
