@@ -9,6 +9,7 @@ import {
   FileUpIcon,
   XIcon,
 } from 'lucide-react'
+import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import Spinner from '@/components/common/Spinner'
@@ -20,6 +21,7 @@ import {
   useUploader,
 } from '@/components/upload/uploader-provider'
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
+import { db } from '@/lib/prisma'
 
 // Create some dummy initial files
 const initialFiles = [
@@ -78,13 +80,16 @@ const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
 }
 
 export default function Component() {
+  const params = useParams()
+  const agentId = params.agentId as string
+  console.log(params)
+
   const {
     fileStates, // Array of current file states
     addFiles, // Function to add files
     removeFile, // Function to remove a file by key
     cancelUpload, // Function to cancel an upload by key
     uploadFiles, // Function to trigger uploads (all pending or specific keys)
-    isUploading, // Boolean indicating if any upload is in progress
   } = useUploader()
 
   function handleAddFiles(e: React.ChangeEvent<HTMLInputElement>) {
@@ -104,17 +109,40 @@ export default function Component() {
   }
 
   async function handleUploadFiles() {
+    // Upload files marked as PENDING
     const uploadPromise = Promise.all(
       fileStates
         .filter((fileState) => fileState.status === 'PENDING')
-        .map((fileState) => uploadFiles([fileState.key])),
+        .map((fileState) => uploadFiles([fileState.key])), // remove array bracket
     )
 
-    toast.promise(uploadPromise, {
-      loading: 'Uploading files...',
-      success: 'Files uploaded successfully!',
-      error: 'Failed to upload files',
-    })
+    toast.promise(
+      uploadPromise.then(async () => {
+        // After upload completes, save uploaded files to DB
+
+        //create a route to save data to the database
+        await Promise.all(
+          fileStates
+            .filter((fileState) => fileState.status === 'COMPLETE')
+            .map((fileState) =>
+              db.docs.create({
+                data: {
+                  agentId,
+                  name: fileState.file.name,
+                  size: fileState.file.size,
+                  type: fileState.file.type,
+                  url: fileState.url || '',
+                },
+              }),
+            ),
+        )
+      }),
+      {
+        loading: 'Uploading files...',
+        success: 'Files uploaded and saved successfully!',
+        error: 'Failed to upload or save files',
+      },
+    )
   }
 
   const maxSize = 2 * 1024 * 1024 // 10MB default

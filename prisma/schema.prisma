@@ -90,7 +90,7 @@ model Subscription {
 
 model Agent {
   id          String   @id @default(cuid())
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   name        String
   description String?
@@ -98,18 +98,40 @@ model Agent {
   updatedAt   DateTime @updatedAt
 
   // sources of knowledge
-  size       Int       @default(0) // number of documents indexed
-  pdfUrls    String[] // S3/Cloud links to PDFs
+  size       Int           @default(0) // number of documents indexed
+  Docs       Docs[] // S3/Cloud links to PDFs
   webLinks   String[] // List of URLs
-  qnaSource  String? // Optional path to QnA CSV
-  textSource String? // Optional text source
-  apiKey     String    @unique
-  isTrained  Boolean   @default(false)
+  Text       Text[] // Optional text source
+  apiKey     String        @unique
+  isTrained  Boolean       @default(false)
   trainingAt DateTime?
+  usage      AgentUsage?
+  chats      ChatMessage[]
+  Qna        Qna[]
+}
 
-  usage AgentUsage?
-  chats ChatMessage[]
-  Qna   Qna[]
+model Text {
+  id        String   @id @default(cuid())
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId   String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@unique([agentId, content])
+}
+
+model Docs {
+  id        String   @id @default(cuid())
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId   String
+  url       String
+  name      String
+  size      Int
+  type      String
+  createdAt DateTime @default(now())
+
+  @@unique([agentId, url])
 }
 
 model Qna {
