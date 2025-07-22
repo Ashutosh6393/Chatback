@@ -1,5 +1,6 @@
 'use client'
 
+import { useParams } from 'next/navigation'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 import Drop from '@/components/Drop'
@@ -10,12 +11,16 @@ import {
 import { useEdgeStore } from '@/lib/edgestore'
 
 const FilePage = () => {
+  const params = useParams()
+  const agentId = params.agentId as string
   const { edgestore } = useEdgeStore()
   const [_uploading, setUploading] = useState(false)
 
   const uploadFn: UploadFn = useCallback(
     async ({ file, onProgressChange, signal }) => {
       setUploading(true)
+
+      console.log('file info::', file)
 
       const res = await edgestore.publicFiles
         .upload({
@@ -24,8 +29,23 @@ const FilePage = () => {
           onProgressChange,
         })
         .finally(() => setUploading(false))
-      // toast.success(`File ${file.name} uploaded successfully!`)
-      console.log(res)
+
+      if (res) {
+        const fileInfo = {
+          agentId,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          url: res.url,
+        }
+        await fetch('/api/saveFiles', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(fileInfo),
+        })
+      }
       return res
     },
     [edgestore],

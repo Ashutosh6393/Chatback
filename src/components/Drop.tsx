@@ -10,18 +10,13 @@ import {
   XIcon,
 } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import Spinner from '@/components/common/Spinner'
 import { Button } from '@/components/ui/button'
 import {
   type FileState,
-  UploaderProvider,
-  type UploadFn,
   useUploader,
 } from '@/components/upload/uploader-provider'
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
-import { db } from '@/lib/prisma'
 
 // Create some dummy initial files
 const initialFiles = [
@@ -80,10 +75,6 @@ const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
 }
 
 export default function Component() {
-  const params = useParams()
-  const agentId = params.agentId as string
-  console.log(params)
-
   const {
     fileStates, // Array of current file states
     addFiles, // Function to add files
@@ -110,33 +101,26 @@ export default function Component() {
 
   async function handleUploadFiles() {
     // Upload files marked as PENDING
-    const uploadPromise = Promise.all(
-      fileStates
-        .filter((fileState) => fileState.status === 'PENDING')
-        .map((fileState) => uploadFiles([fileState.key])), // remove array bracket
-    )
+    // const uploadPromise = Promise.all(
+    //   fileStates
+    //     .filter((fileState) => fileState.status === 'PENDING')
+    //     .map((fileState) => {
+    //       uploadFiles([fileState.key])
+    //       fileState.status = 'COMPLETE'
+    //     }), // remove array bracket
+    // )
 
     toast.promise(
-      uploadPromise.then(async () => {
-        // After upload completes, save uploaded files to DB
-
-        //create a route to save data to the database
-        await Promise.all(
-          fileStates
-            .filter((fileState) => fileState.status === 'COMPLETE')
-            .map((fileState) =>
-              db.docs.create({
-                data: {
-                  agentId,
-                  name: fileState.file.name,
-                  size: fileState.file.size,
-                  type: fileState.file.type,
-                  url: fileState.url || '',
-                },
-              }),
-            ),
+      (async () => {
+        const pendingFiles = fileStates.filter(
+          (file) => file.status === 'PENDING',
         )
-      }),
+
+        for (const fileState of pendingFiles) {
+          await uploadFiles([fileState.key])
+        }
+      })(),
+
       {
         loading: 'Uploading files...',
         success: 'Files uploaded and saved successfully!',
