@@ -75,6 +75,8 @@ const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
 }
 
 export default function Component() {
+  const params = useParams()
+  const agentId = params.agentId as string
   const {
     fileStates, // Array of current file states
     addFiles, // Function to add files
@@ -82,6 +84,27 @@ export default function Component() {
     cancelUpload, // Function to cancel an upload by key
     uploadFiles, // Function to trigger uploads (all pending or specific keys)
   } = useUploader()
+
+  async function getFiles() {
+    try {
+      const data = await fetch(`/api/agents/files?agentId=${agentId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!data.ok) {
+        throw new Error('Failed to fetch files')
+      }
+      const files = await data.json()
+      return files
+    } catch (error) {
+      console.error('Error fetching files:', error)
+      toast.error('Failed to fetch files')
+      return []
+    }
+  }
 
   function handleAddFiles(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault()
