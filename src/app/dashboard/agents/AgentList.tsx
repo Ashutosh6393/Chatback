@@ -71,16 +71,16 @@ const AgentList = ({ userId }: Props) => {
             key={agent.id}
             variant={'outline'}
             onClick={() => handleAgentClick(agent.id)}
-            className="p-4 cursor-pointer"
+            className="cursor-pointer p-4"
           >
-            <div className="flex h-40 w-1/3 flex-col items-start justify-start rounded-2xl border-[1px] gap-3 border-gray-200 bg-light-gray ">
-              <Bot className="text-zinc-800 size-10" />
+            <div className="flex h-40 w-1/3 flex-col items-start justify-start gap-3 rounded-2xl border-[1px] border-gray-200 bg-light-gray ">
+              <Bot className="size-10 text-zinc-800" />
 
-              <div className="flex-1 w-full">
-                <h2 className="text-xl font-semibold text-zinc-700 capitalize">
+              <div className="w-full flex-1">
+                <h2 className="font-semibold text-xl text-zinc-700 capitalize">
                   {agent.name}
                 </h2>
-                <p className="text-sm font-medium text-muted-foreground">
+                <p className="font-medium text-muted-foreground text-sm">
                   {agent.description}
                 </p>
               </div>

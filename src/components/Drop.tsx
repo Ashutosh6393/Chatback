@@ -19,7 +19,7 @@ import {
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
 
 // Create some dummy initial files
-const initialFiles = [
+const _initialFiles = [
   {
     name: 'document.pdf',
     size: 528737,
@@ -85,7 +85,7 @@ export default function Component() {
     uploadFiles, // Function to trigger uploads (all pending or specific keys)
   } = useUploader()
 
-  async function getFiles() {
+  async function _getFiles() {
     try {
       const data = await fetch(`/api/agents/files?agentId=${agentId}`, {
         method: 'GET',
@@ -265,7 +265,7 @@ export default function Component() {
                     href={fileState.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-zinc-800 font-semibold hover:text-foreground"
+                    className="font-semibold text-sm text-zinc-800 hover:text-foreground"
                   >
                     <Eye className="size-5 text-foreground/80 hover:text-foreground" />
                   </a>
@@ -278,7 +278,7 @@ export default function Component() {
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="-me-2 cursor-pointer size-8 text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
+                  className="-me-2 size-8 cursor-pointer text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
                   onClick={() => handleRemoveFile(fileState)}
                   aria-label="Remove file"
                 >

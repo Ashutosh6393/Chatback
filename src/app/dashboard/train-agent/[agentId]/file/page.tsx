@@ -1,54 +1,123 @@
 'use client'
 
+import { Eye, FileTextIcon, XIcon } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import Drop from '@/components/Drop'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   UploaderProvider,
   type UploadFn,
 } from '@/components/upload/uploader-provider'
+import type { Docs } from '@/generated/prisma'
+import { formatBytes } from '@/hooks/use-file-upload'
 import { useEdgeStore } from '@/lib/edgestore'
+import { useFileStore } from '@/store/fileStore'
+
+async function getFiles(agentId: string): Promise<Docs[]> {
+  try {
+    const response = await fetch(`/api/agents/files?agentId=${agentId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch files')
+    }
+
+    const files = await response.json()
+    return files
+  } catch (error) {
+    console.error('Error fetching files:', error)
+    toast.error('Failed to fetch files')
+    // return []
+    return [] as Docs[]
+  }
+}
 
 const FilePage = () => {
   const params = useParams()
   const agentId = params.agentId as string
   const { edgestore } = useEdgeStore()
   const [_uploading, setUploading] = useState(false)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const { files, setFiles, addFile } = useFileStore()
+
+  async function deleteFile({ fileId, url }: { fileId: string; url: string }) {
+    try {
+      //delete from database
+      // delete from store
+      // update file state
+    } catch (_error) {}
+  }
+
+  useEffect(() => {
+    async function fetchFiles() {
+      setLoading(true)
+      const data = await getFiles(agentId)
+
+      if (data.length > 0) {
+        setFiles(Array.isArray(data) ? data : [data])
+      }
+      setLoading(false)
+    }
+
+    if (!files || files.length === 0) {
+      fetchFiles()
+    }
+  }, [agentId])
 
   const uploadFn: UploadFn = useCallback(
     async ({ file, onProgressChange, signal }) => {
       setUploading(true)
+      const res = await edgestore.publicFiles.upload({
+        file,
+        signal,
+        onProgressChange,
+      })
+      try {
+        if (res) {
+          const fileInfo = {
+            agentId,
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            url: res.url,
+          }
 
-      console.log('file info::', file)
+          const saveRes = await fetch('/api/saveFiles', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(fileInfo),
+          })
 
-      const res = await edgestore.publicFiles
-        .upload({
-          file,
-          signal,
-          onProgressChange,
-        })
-        .finally(() => setUploading(false))
+          // console.log('saveRes', await saveRes.json())
 
-      if (res) {
-        const fileInfo = {
-          agentId,
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          url: res.url,
+          if (!saveRes.ok) {
+            throw new Error('Failed to save file info')
+          }
+          if (saveRes.ok) {
+            addFile(await saveRes.json())
+          }
         }
-        await fetch('/api/saveFiles', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(fileInfo),
-        })
+      } catch (error) {
+        toast.error('Upload failed')
+        console.error('Upload error:', error)
+        await edgestore.publicFiles.delete({ url: res.url })
+      } finally {
+        setUploading(false)
       }
+
       return res
     },
-    [edgestore],
+    [edgestore, agentId, setUploading],
   )
 
   return (
@@ -65,6 +134,60 @@ const FilePage = () => {
           <Drop />
         </div>
       </div>
+
+      {loading ? (
+        <div className="mt-4 flex flex-col gap-2">
+          <Skeleton className="h-16 w-full bg-zinc-200" />
+          <Skeleton className="h-16 w-full bg-zinc-200" />
+        </div>
+      ) : files && files.length > 0 ? (
+        <div className="mt-4 flex flex-col gap-2">
+          <h3 className="font-semibold text-lg">Uploaded Files</h3>
+          {files.map((file) => (
+            <div
+              key={file.id}
+              className="flex items-center justify-between gap-2 rounded-lg border bg-background p-2 pe-3"
+            >
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
+                  <FileTextIcon className="size-4 opacity-60" />
+                </div>
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <p className="truncate font-medium text-[13px]">
+                    {file.name}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    {formatBytes(file.size)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={file.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-sm text-zinc-800 hover:text-foreground"
+                >
+                  <Eye className="size-5 text-foreground/80 hover:text-foreground" />
+                </a>
+
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="-me-2 size-8 cursor-pointer text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
+                  onClick={() => deleteFile({ fileId: file.id, url: file.url })}
+                  aria-label="Remove file"
+                >
+                  <XIcon className="size-4" aria-hidden="true" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        ''
+      )}
     </UploaderProvider>
   )
 }

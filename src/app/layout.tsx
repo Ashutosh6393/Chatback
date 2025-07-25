@@ -5,6 +5,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar/Navbar'
 import { Toaster } from '@/components/ui/sonner'
 import { authClient } from '@/lib/auth-client'
+export const dynamic = 'force-dynamic'
 
 const urbanist = Urbanist({
   variable: '--font-urbanist',
@@ -32,6 +33,7 @@ async function getUser() {
   const { data } = await authClient.getSession({
     fetchOptions: {
       headers: await headers(),
+      cache: 'no-store',
     },
   })
 
@@ -44,7 +46,6 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const user = await getUser()
-  // console.log('root', user)
 
   return (
     <html lang="en">

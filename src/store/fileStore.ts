@@ -1,18 +1,18 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
 type File = {
-  name: string;
-  size: number;
-  type: string;
-  url: string;
-  id: string;
-};
+  name: string
+  size: number
+  type: string
+  url: string
+  id: string
+}
 
 interface FileStoreType {
-  files: File[] | null;
-  setFiles: (files: File[]) => void;
-  addFile: (file: File) => void;
-  removeFile: (fileId: string) => void;
+  files: File[] | null
+  setFiles: (files: File[]) => void
+  addFile: (file: File) => void
+  removeFile: (fileId: string) => void
 }
 
 export const useFileStore = create<FileStoreType>((set) => ({
@@ -31,4 +31,4 @@ export const useFileStore = create<FileStoreType>((set) => ({
         ? state.files.filter((file) => file.id !== fileId)
         : null,
     })),
-}));
+}))
