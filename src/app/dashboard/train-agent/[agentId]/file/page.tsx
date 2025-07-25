@@ -4,6 +4,7 @@ import { Eye, FileTextIcon, XIcon } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import Spinner from '@/components/common/Spinner'
 import Drop from '@/components/Drop'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -45,15 +46,36 @@ const FilePage = () => {
   const { edgestore } = useEdgeStore()
   const [_uploading, setUploading] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-
-  const { files, setFiles, addFile } = useFileStore()
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set())
+  const { files, setFiles, addFile, removeFile } = useFileStore()
 
   async function deleteFile({ fileId, url }: { fileId: string; url: string }) {
+    setDeletingIds((prev) => new Set(prev).add(fileId))
     try {
-      //delete from database
-      // delete from store
-      // update file state
-    } catch (_error) {}
+      await edgestore.publicFiles.delete({ url }).then(async () => {
+        await fetch('/api/agents/files/deleteFiles', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fileId }),
+        })
+        toast.success('File deleted successfully')
+      })
+
+      removeFile(fileId)
+    } catch (_error) {
+      toast.error('Failed to delete file')
+      console.error('Delete file error:', _error)
+      // Optionally, you can re-upload the file if deletion fails
+      // await edgestore.publicFiles.upload({ url })
+    } finally {
+      setDeletingIds((prev) => {
+        const newSet = new Set(prev)
+        newSet.delete(fileId)
+        return newSet
+      })
+    }
   }
 
   useEffect(() => {
@@ -90,7 +112,7 @@ const FilePage = () => {
             url: res.url,
           }
 
-          const saveRes = await fetch('/api/saveFiles', {
+          const saveRes = await fetch('/api/agents/files/saveFiles', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -178,8 +200,13 @@ const FilePage = () => {
                   className="-me-2 size-8 cursor-pointer text-muted-foreground/80 hover:bg-transparent hover:text-foreground"
                   onClick={() => deleteFile({ fileId: file.id, url: file.url })}
                   aria-label="Remove file"
+                  key={file.id}
                 >
-                  <XIcon className="size-4" aria-hidden="true" />
+                  {deletingIds.has(file.id) ? (
+                    <Spinner />
+                  ) : (
+                    <XIcon className="size-4" aria-hidden="true" />
+                  )}
                 </Button>
               </div>
             </div>

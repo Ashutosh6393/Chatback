@@ -2,9 +2,6 @@
 import {
   AlertCircleIcon,
   Eye,
-  FileArchiveIcon,
-  FileIcon,
-  FileSpreadsheetIcon,
   FileTextIcon,
   FileUpIcon,
   XIcon,
@@ -18,65 +15,7 @@ import {
 } from '@/components/upload/uploader-provider'
 import { formatBytes, useFileUpload } from '@/hooks/use-file-upload'
 
-// Create some dummy initial files
-const _initialFiles = [
-  {
-    name: 'document.pdf',
-    size: 528737,
-    type: 'application/pdf',
-    url: 'https://example.com/document.pdf',
-    id: 'document.pdf-1744638436563-8u5xuls',
-  },
-  {
-    name: 'intro.zip',
-    size: 252873,
-    type: 'application/zip',
-    url: 'https://example.com/intro.zip',
-    id: 'intro.zip-1744638436563-8u5xuls',
-  },
-  {
-    name: 'conclusion.xlsx',
-    size: 352873,
-    type: 'application/xlsx',
-    url: 'https://example.com/conclusion.xlsx',
-    id: 'conclusion.xlsx-1744638436563-8u5xuls',
-  },
-]
-
-const getFileIcon = (file: { file: File | { type: string; name: string } }) => {
-  const fileType = file.file instanceof File ? file.file.type : file.file.type
-  const fileName = file.file instanceof File ? file.file.name : file.file.name
-
-  if (
-    fileType.includes('pdf') ||
-    fileName.endsWith('.pdf') ||
-    fileType.includes('word') ||
-    fileName.endsWith('.doc') ||
-    fileName.endsWith('.docx')
-  ) {
-    return <FileTextIcon className="size-4 opacity-60" />
-  }
-  if (
-    fileType.includes('zip') ||
-    fileType.includes('archive') ||
-    fileName.endsWith('.zip') ||
-    fileName.endsWith('.rar')
-  ) {
-    return <FileArchiveIcon className="size-4 opacity-60" />
-  }
-  if (
-    fileType.includes('excel') ||
-    fileName.endsWith('.xls') ||
-    fileName.endsWith('.xlsx')
-  ) {
-    return <FileSpreadsheetIcon className="size-4 opacity-60" />
-  }
-  return <FileIcon className="size-4 opacity-60" />
-}
-
 export default function Component() {
-  const params = useParams()
-  const agentId = params.agentId as string
   const {
     fileStates, // Array of current file states
     addFiles, // Function to add files
@@ -84,27 +23,6 @@ export default function Component() {
     cancelUpload, // Function to cancel an upload by key
     uploadFiles, // Function to trigger uploads (all pending or specific keys)
   } = useUploader()
-
-  async function _getFiles() {
-    try {
-      const data = await fetch(`/api/agents/files?agentId=${agentId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      if (!data.ok) {
-        throw new Error('Failed to fetch files')
-      }
-      const files = await data.json()
-      return files
-    } catch (error) {
-      console.error('Error fetching files:', error)
-      toast.error('Failed to fetch files')
-      return []
-    }
-  }
 
   function handleAddFiles(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault()
@@ -116,23 +34,11 @@ export default function Component() {
   function handleRemoveFile(fileState: FileState) {
     if (fileState.status === 'UPLOADING') {
       cancelUpload(fileState.key)
-    } else if (fileState.status === 'COMPLETE') {
-      // delete file from db and server
     }
     removeFile(fileState.key)
   }
 
   async function handleUploadFiles() {
-    // Upload files marked as PENDING
-    // const uploadPromise = Promise.all(
-    //   fileStates
-    //     .filter((fileState) => fileState.status === 'PENDING')
-    //     .map((fileState) => {
-    //       uploadFiles([fileState.key])
-    //       fileState.status = 'COMPLETE'
-    //     }), // remove array bracket
-    // )
-
     toast.promise(
       (async () => {
         const pendingFiles = fileStates.filter(
@@ -141,7 +47,10 @@ export default function Component() {
 
         for (const fileState of pendingFiles) {
           await uploadFiles([fileState.key])
+          removeFile(fileState.key)
         }
+
+        // fileStates = fileStates.filter((file) => file.status !== 'COMPLETE')
       })(),
 
       {
@@ -237,7 +146,7 @@ export default function Component() {
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <div className="flex aspect-square size-10 shrink-0 items-center justify-center rounded border">
-                  {getFileIcon({ file: fileState.file })}
+                  <FileTextIcon className="size-4 opacity-60" />
                 </div>
                 <div className="flex min-w-0 flex-col gap-0.5">
                   <p className="truncate font-medium text-[13px]">
