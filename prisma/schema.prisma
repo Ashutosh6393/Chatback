@@ -8,29 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
-
-  // SaaS related
-  subscription Subscription?
-  credits      Int           @default(100) // number of messages/user interactions allowed
-  creditsUsed  Int           @default(0)
-
-  agents       Agent[]
-  chatMessages ChatMessage[]
-
-  @@unique([email])
-  @@map("user")
-}
-
 model Session {
   id        String   @id
   expiresAt DateTime
@@ -76,16 +53,55 @@ model Verification {
   @@map("verification")
 }
 
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+
+  // SaaS related
+  subscription Subscription[]
+  agents       Agent[]
+  ChatMessage  ChatMessage[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  trialing
+  incomplete
+  past_due
+}
+
+enum Plan {
+  free
+  hobby
+  pro
+  enterprise
+}
+
 model Subscription {
-  id               String    @id @default(cuid())
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String    @unique
-  plan             String // "free","hobby" "pro", "enterprise"
+  id               String              @id @default(cuid())
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  plan             Plan                @default(free) // "free","hobby" "pro", "enterprise"
+  credits          Int                 @default(100) // number of messages/user interactions allowed
+  creditsUsed      Int                 @default(0) // messages used
   priceId          String? // Stripe price id (if using Stripe)
-  status           String // "active", "canceled", etc.
-  startedAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  status           SubscriptionStatus? // "active", "canceled", etc.
+  startedAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
   currentPeriodEnd DateTime?
+
+  @@index([userId])
 }
 
 model Agent {
@@ -98,27 +114,17 @@ model Agent {
   updatedAt   DateTime @updatedAt
 
   // sources of knowledge
-  size       Int           @default(0) // number of documents indexed
-  Docs       Docs[] // S3/Cloud links to PDFs
+
+  docs       Docs[] // S3/Cloud links to PDFs
   webLinks   String[] // List of URLs
-  Text       Text[] // Optional text source
+  text       Text[] // Optional text source
+  chats      ChatMessage[]
+  qna        Qna[]
+  agentSize  AgentSize[]
+  usage      AgentUsage?
+  trainingAt DateTime?
   apiKey     String        @unique
   isTrained  Boolean       @default(false)
-  trainingAt DateTime?
-  usage      AgentUsage?
-  chats      ChatMessage[]
-  Qna        Qna[]
-}
-
-model Text {
-  id        String   @id @default(cuid())
-  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  agentId   String
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-
-  @@unique([agentId, content])
 }
 
 model Docs {
@@ -134,6 +140,28 @@ model Docs {
   @@unique([agentId, url])
 }
 
+model Text {
+  id        String   @id @default(cuid())
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId   String
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@unique([agentId, content])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId   String
+  role      Role // "user" | "assistant"
+  content   String
+  createdAt DateTime @default(now())
+}
+
 model Qna {
   id        String   @id @default(cuid())
   agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
@@ -146,24 +174,30 @@ model Qna {
   @@unique([agentId, question])
 }
 
+enum SourceType {
+  text
+  docs
+  qna
+}
+
+model AgentSize {
+  id         String     @id @default(cuid())
+  agent      Agent      @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  agentId    String
+  sourceType SourceType // "text", "docs", "qna"
+  size       Int        @default(0)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@unique([agentId, sourceType])
+}
+
 model AgentUsage {
   id            String    @id @default(cuid())
   agent         Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
   agentId       String    @unique
   totalRequests Int       @default(0)
   lastUsedAt    DateTime?
-}
-
-model ChatMessage {
-  id      String @id @default(cuid())
-  user    User   @relation(fields: [userId], references: [id])
-  userId  String
-  agent   Agent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  agentId String
-
-  role      Role // "user" | "assistant"
-  content   String
-  createdAt DateTime @default(now())
 }
 
 enum Role {

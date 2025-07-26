@@ -209,3 +209,14 @@ export default function Component() {
     </div>
   )
 }
+
+// {
+//   /*
+//   {
+//     plan=> no of agents allowed, allowed storage,
+//     storeAgent=> storage used
+
+//   }
+
+//   */
+// }
