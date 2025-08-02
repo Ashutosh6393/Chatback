@@ -1,11 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display, Urbanist } from 'next/font/google'
-import { headers } from 'next/headers'
 import './globals.css'
 import Navbar from '@/components/Navbar/Navbar'
 import { Toaster } from '@/components/ui/sonner'
-import { authClient } from '@/lib/auth-client'
-export const dynamic = 'force-dynamic'
+import Provider from './providers'
 
 const urbanist = Urbanist({
   variable: '--font-urbanist',
@@ -28,33 +26,21 @@ export const metadata: Metadata = {
     'Chatback is a platform for chatting with your friends and family',
 }
 
-async function getUser() {
-  'use server'
-  const { data } = await authClient.getSession({
-    fetchOptions: {
-      headers: await headers(),
-      cache: 'no-store',
-    },
-  })
-
-  return data?.user || null
-}
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const user = await getUser()
-
   return (
     <html lang="en">
       <body
         className={`${playfair.variable} ${inter.variable} ${urbanist.variable} ${urbanist.className} antialiased`}
       >
-        <Navbar user={user} />
-        {children}
-        <Toaster />
+        <Provider>
+          <Navbar />
+          {children}
+          <Toaster />
+        </Provider>
       </body>
     </html>
   )

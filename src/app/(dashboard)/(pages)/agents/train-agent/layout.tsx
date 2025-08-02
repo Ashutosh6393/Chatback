@@ -3,6 +3,7 @@ import { ArrowLeft, File, Globe, MessageCircle, Text } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import NavLink from '@/components/common/NavLink'
 import { Button } from '@/components/ui/button'
+import { useAuthStore } from '@/store/globalStore'
 
 const trainOptions = [
   { option: 'File', icon: <File className="size-5" />, link: 'file' },
@@ -12,6 +13,26 @@ const trainOptions = [
 ]
 
 const CreateAgentLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuthStore()
+
+  const getData = async () => {
+    try {
+      const response = await fetch(`/api/subscription?userId=${user?.id}`)
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch subscription')
+      }
+      const data = await response.json()
+
+      data.plan
+
+      return data
+    } catch (error) {
+      console.error('Error fetching subscription data:', error)
+      return null
+    }
+  }
+
   const router = useRouter()
   const params = useParams()
 

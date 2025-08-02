@@ -72,8 +72,10 @@ function PricingTableItem({
         <ul className="flex flex-col gap-3">
           {features.map((feature) => (
             <li key={feature} className="flex items-center gap-2.5">
-              <Check className="size-4" />
-              {feature}
+              <span>
+                <Check className="size-5" />
+              </span>
+              <p>{feature}</p>
             </li>
           ))}
         </ul>

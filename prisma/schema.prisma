@@ -65,7 +65,7 @@ model User {
   accounts      Account[]
 
   // SaaS related
-  subscription Subscription[]
+  subscription Subscription?
   agents       Agent[]
   ChatMessage  ChatMessage[]
 
@@ -101,6 +101,7 @@ model Subscription {
   updatedAt        DateTime            @updatedAt
   currentPeriodEnd DateTime?
 
+  @@unique([userId])
   @@index([userId])
 }
 
